@@ -580,10 +580,18 @@ details.advanced > summary .hint { font-weight: 400; color: var(--muted); font-s
 .provider-panel__empty { padding: 10px 6px; font-size: 12.5px; color: var(--muted); }
 
 /* --- Methodik ------------------------------------------------------------- */
-.methodik { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.methodik { display: grid; gap: 22px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
 .methodik article h3 { margin-bottom: 5px; }
 .methodik article p { color: var(--ink-2); font-size: 13.5px; }
 .methodik article p + p { margin-top: 8px; }
+/* Formelblock in der Methodik: zwei Zeilen, monospaced, ruhig hinterlegt */
+.formula {
+  display: grid; gap: 3px; margin: 10px 0;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 10px 12px;
+  font-family: var(--mono); font-size: 12.5px; line-height: 1.5;
+}
+.formula code { white-space: normal; overflow-wrap: anywhere; }
 
 /* --- Fußzeile ------------------------------------------------------------- */
 .site-footer { border-top: 1px solid var(--border); background: var(--surface); }

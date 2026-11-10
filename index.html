@@ -426,27 +426,47 @@
       <article data-lang-block="de">
         <h3>Hochgerechnete Kosten</h3>
         <p>
-          „Kosten gesamt“ ist dein Nutzungsprofil mal die Preise des Endpoints:
-          <code>(Input − Cache) × Preis_in + Cache × Preis_cache + Output × Preis_out</code>.
-          „Kosten je 1.000 Calls“ ist derselbe Wert, nur auf 1.000 Calls normiert — damit sich
-          Anbieter vergleichen lassen, egal wie groß dein Log ist.
+          Die Cache-Token sind kein eigener Messwert — sie ergeben sich aus dem Input und der
+          Cache-Quote. Erst dieser Schritt, dann die Kosten:
+        </p>
+        <div class="formula">
+          <code>Cache&nbsp;&nbsp;&nbsp;= Input × Cache-Quote / 100</code>
+          <code>Kosten&nbsp;&nbsp;= (Input − Cache) × Preis_in</code>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ Cache × Preis_cache</code>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ Output × Preis_out</code>
+        </div>
+        <p>
+          Beispiel: 2 Mio. Input-Token, 97 % Cache-Quote, 0,5 Mio. Output-Token, 1.000 Calls.
+          Daraus folgen 1,94 Mio. Cache-Token und 0,06 Mio. frische Token. Bei $0,08/Mio Input,
+          $0,003/Mio Cache und $0,24/Mio Output sind das $0,13 für 1.000 Calls.
         </p>
         <p>
-          Beide Spalten beruhen auf absoluten Tokenmengen. Zwei Profile mit gleichem Verhältnis, aber
-          unterschiedlicher Länge ergeben dieselben Kosten je 1.000 Calls.
+          Ohne Cache-Tarif ist Preis_cache gleich Preis_in — dann ändert die Quote die Kosten nicht,
+          und die Spalte „Cache-Quote“ zeigt „—“. „Kosten je 1.000 Calls“ ist derselbe Wert, nur auf
+          1.000 Calls normiert, damit sich Anbieter unabhängig von der Log-Größe vergleichen lassen.
         </p>
       </article>
       <article data-lang-block="en">
         <h3>Projected costs</h3>
         <p>
-          “Total cost” is your usage profile times the endpoint's prices:
-          <code>(input − cache) × price_in + cache × price_cache + output × price_out</code>.
-          “Cost per 1,000 calls” is the same value normalized to 1,000 calls — so providers stay
-          comparable no matter how large your log is.
+          The cache tokens are not a separate measurement — they follow from the input and the cache
+          hit rate. First this step, then the cost:
+        </p>
+        <div class="formula">
+          <code>cache&nbsp;=&nbsp;input × cache hit / 100</code>
+          <code>cost&nbsp;&nbsp;=&nbsp;(input − cache) × price_in</code>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;cache × price_cache</code>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;output × price_out</code>
+        </div>
+        <p>
+          Example: 2 M input tokens, 97 % cache hit, 0.5 M output tokens, 1,000 calls. That gives
+          1.94 M cached and 0.06 M fresh tokens. At $0.08/M input, $0.003/M cache and $0.24/M output
+          this comes to $0.13 per 1,000 calls.
         </p>
         <p>
-          Both columns are based on absolute token counts. Two profiles with the same ratio but
-          different length produce the same cost per 1,000 calls.
+          Without a cache rate, price_cache equals price_in — the hit rate then does not change the
+          cost, and the “Cache hit” column shows “—”. “Cost per 1,000 calls” is the same value
+          normalized to 1,000 calls, so providers stay comparable regardless of log size.
         </p>
       </article>
 
