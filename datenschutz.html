@@ -81,17 +81,17 @@
       </article>
 
       <article>
-        <h3>Abruf der Preisdaten</h3>
+        <h3>Keine Anfragen an Dritte</h3>
         <p>
           Preise, Durchsatz und Latenz liegen als Datei <code>data/models.json</code> auf dieser
-          Seite und werden von hier geladen — nicht live von OpenRouter. Deine IP-Adresse geht
-          dadurch nicht an OpenRouter.
+          Seite und werden von hier geladen — nicht live von OpenRouter. Beim Benutzen der Seite
+          entstehen keine Verbindungen zu OpenRouter oder zu anderen Servern.
         </p>
         <p>
-          Nur wenn du ein Modell suchst, das in dieser Datei noch fehlt, fragt die Seite die
-          öffentliche OpenRouter-API direkt aus deinem Browser ab. Dabei wird deine IP-Adresse an
-          openrouter.ai übertragen. Das passiert ausschließlich auf deine Veranlassung und ist für
-          diese eine Funktion technisch unvermeidbar.
+          Technisch erzwungen durch eine Content-Security-Policy im Kopf der Seite:
+          <code>connect-src 'self'</code> erlaubt dem Browser ausschließlich Verbindungen zum
+          eigenen Server. Selbst wenn ein Skript versuchen würde, deine Daten zu senden, würde der
+          Browser es blockieren.
         </p>
       </article>
 
