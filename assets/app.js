@@ -66,6 +66,7 @@
       'badge.cheapest': 'günstigste',
       'badge.degraded': 'degradiert',
       'badge.inLog': 'im Log',
+      'badge.log': 'Log',
 
       'table.empty': 'Keine Anbieter für dieses Modell.',
       'table.noRows': 'Alle Anbieter sind ausgeblendet — Filter zurücksetzen.',
@@ -82,6 +83,9 @@
       'cache.none': 'kein Cache',
       'usage.perCall': 'Ø {in} Input / {out} Output pro Call',
       'usage.perCallUnknown': 'Calls steht auf 0 — bitte Anzahl eintragen',
+      'usage.cacheAvg': 'Ø der Anbieter',
+      'usage.cacheLog': 'aus dem Log',
+      'usage.cacheNone': 'kein Cache',
 
       'msg.reading': 'lese {name} …',
       'msg.readOk': '{name} · {calls} Calls · Ø {in} Input, {out} Output · Cache-Quote {hit}',
@@ -212,6 +216,7 @@
       'badge.cheapest': 'cheapest',
       'badge.degraded': 'degraded',
       'badge.inLog': 'in log',
+      'badge.log': 'log',
 
       'table.empty': 'No providers for this model.',
       'table.noRows': 'All providers are hidden — reset the filter.',
@@ -228,6 +233,9 @@
       'cache.none': 'no cache',
       'usage.perCall': 'avg. {in} input / {out} output per call',
       'usage.perCallUnknown': 'calls is 0 — please enter a count',
+      'usage.cacheAvg': 'avg of providers',
+      'usage.cacheLog': 'from the log',
+      'usage.cacheNone': 'no cache',
 
       'msg.reading': 'reading {name} …',
       'msg.readOk': '{name} · {calls} calls · avg. {in} input, {out} output · cache hit {hit}',
@@ -370,9 +378,9 @@
   };
 
   const COL_PRESETS = {
-    overview: ['provider', 'quant', 'in', 'out', 'cache', 'projTotal', 'proj1000', 'toks', 'ttft', 'uptime'],
-    price: ['provider', 'quant', 'in', 'out', 'cache', 'proj1000'],
-    usage: ['provider', 'quant', 'projTotal', 'proj1000', 'toks', 'ttft', 'uptime'],
+    overview: ['provider', 'quant', 'in', 'out', 'cache', 'projTotal', 'proj1000', 'toks', 'ttft', 'uptime', 'hit'],
+    price: ['provider', 'quant', 'in', 'out', 'cache', 'hit', 'proj1000'],
+    usage: ['provider', 'quant', 'projTotal', 'proj1000', 'hit', 'toks', 'ttft', 'uptime'],
     perf: ['provider', 'quant', 'toks', 'ttft', 'uptime', 'hit'],
     compact: ['provider', 'quant', 'proj1000', 'toks'],
     all: COLUMNS.map(c => c.key),
@@ -635,6 +643,7 @@
       case 'projIn': return row._projIn;
       case 'projCache': return row._projCache;
       case 'projOut': return row._projOut;
+      case 'hit': return row._hitUsed;
       case 'provider': return row.provider.toLowerCase();
       default: return row[key];
     }
@@ -688,7 +697,15 @@
         const cls = row.uptime >= 99 ? '' : row.uptime >= 95 ? 'class="dim"' : 'class="neg"';
         return `<span ${cls}>${fmtPct(row.uptime)}</span>`;
       }
-      case 'hit': return row.hit == null ? '<span class="dim">—</span>' : fmtPct(row.hit);
+      case 'hit': {
+        // Ohne Cache-Tarif ist die Quote bedeutungslos
+        if (row.cache == null) return '<span class="dim">—</span>';
+        if (state.cost.cacheMode === 'none') return '<span class="dim">0 %</span>';
+        // Fällt die Seite auf die Log-Quote zurück, wird das markiert
+        const fromLog = state.cost.cacheMode === 'provider' && row.hit == null;
+        const badge = fromLog ? ` <span class="badge">${escapeHtml(t('badge.log'))}</span>` : '';
+        return fmtPct(row._hitUsed) + badge;
+      }
       case 'discount': return fmtDiscount(row.discount);
       case 'maxOut': return row.maxOut == null ? '<span class="dim">—</span>' : fmtCtx(row.maxOut);
       default: return '';
@@ -1550,30 +1567,61 @@
 
   /* ------------------------------------------------------------- Kostenmodell */
 
+  // Tokenmengen stehen in Millionen im Feld, intern wird in Token gerechnet.
+  const toMio = v => Math.round(((v || 0) / 1e6) * 1000) / 1000;
+
   function syncCostInputs(disabled) {
     const p = state.profile;
     $('#inCalls').value = Math.round(p ? p.calls : state.cost.calls);
-    $('#inInputTotal').value = Math.round(p ? p.inputTotal : state.cost.inputTotal);
-    $('#inOutputTotal').value = Math.round(p ? p.outputTotal : state.cost.outputTotal);
+    $('#inInputTotal').value = toMio(p ? p.inputTotal : state.cost.inputTotal);
+    $('#inOutputTotal').value = toMio(p ? p.outputTotal : state.cost.outputTotal);
     ['#inCalls', '#inInputTotal', '#inOutputTotal'].forEach(sel => { $(sel).disabled = !!disabled; });
-    updatePerCallHint();
+    updateUsageInfo();
   }
 
-  // Zeigt das abgeleitete Profil pro Call — die Eingaben selbst sind absolute Summen.
-  function updatePerCallHint() {
-    const calls = Math.max(0, Number($('#inCalls').value) || 0);
-    const inputTotal = Math.max(0, Number($('#inInputTotal').value) || 0);
-    const outputTotal = Math.max(0, Number($('#inOutputTotal').value) || 0);
-    const el = $('#perCallHint');
-    if (!el) return;
-    if (!calls) {
-      el.textContent = t('usage.perCallUnknown');
-      return;
+  // Absolute Summen des aktuellen Profils (aus CSV oder aus den Feldern)
+  function profileTotals() {
+    if (state.profile) {
+      return { calls: state.profile.calls, input: state.profile.inputTotal, output: state.profile.outputTotal };
     }
-    el.textContent = t('usage.perCall', {
-      in: fmtInt(inputTotal / calls),
-      out: fmtInt(outputTotal / calls),
-    });
+    const calls = Math.max(0, Number($('#inCalls').value) || 0);
+    return {
+      calls,
+      input: Math.max(0, Number($('#inInputTotal').value) || 0) * 1e6,
+      output: Math.max(0, Number($('#inOutputTotal').value) || 0) * 1e6,
+    };
+  }
+
+  // Welche Cache-Quote gilt im Profil? Bei „je Anbieter“ der Durchschnitt der
+  // Endpoints, sonst die Log-Quote bzw. 0.
+  function usageCache() {
+    if (state.cost.cacheMode === 'none') return { value: 0, note: 'none' };
+    if (state.cost.cacheMode === 'log') return { value: state.profile ? state.profile.logHit : null, note: 'log' };
+    const list = rows().filter(r => r.cache != null && r.hit != null);
+    if (!list.length) return { value: state.profile ? state.profile.logHit : null, note: 'log' };
+    return { value: list.reduce((s, r) => s + r.hit, 0) / list.length, note: 'avg' };
+  }
+
+  // Infozeile: Ø pro Call, Input/Output-Verhältnis, Cache-Quote des Profils
+  function updateUsageInfo() {
+    const el = $('#infoPerCall');
+    if (!el) return;
+    const { calls, input, output } = profileTotals();
+
+    el.textContent = calls
+      ? t('usage.perCall', { in: fmtInt(input / calls), out: fmtInt(output / calls) })
+      : t('usage.perCallUnknown');
+
+    const ratio = output > 0 ? input / output : null;
+    $('#infoRatio').textContent = ratio == null ? '—' : fmtNum(ratio, 1) + ' : 1';
+
+    const cache = usageCache();
+    $('#infoCache').textContent = cache.value == null
+      ? '—'
+      : (cache.note === 'none' ? '0 %' : fmtPct(cache.value));
+    $('#infoCacheNote').textContent = cache.note === 'avg'
+      ? t('usage.cacheAvg')
+      : cache.note === 'log' ? t('usage.cacheLog') : cache.note === 'none' ? t('usage.cacheNone') : '';
   }
 
   function setCacheMode(mode) {
@@ -1583,18 +1631,18 @@
   }
 
   function initCostModel() {
-    const bind = (sel, key) => {
+    const bind = (sel, key, factor = 1) => {
       $(sel).addEventListener('input', e => {
         const v = parseFloat(e.target.value);
-        state.cost[key] = Number.isFinite(v) ? v : 0;
-        updatePerCallHint();
+        state.cost[key] = Number.isFinite(v) ? v * factor : 0;
+        updateUsageInfo();
         saveCost();
         render();
       });
     };
     bind('#inCalls', 'calls');
-    bind('#inInputTotal', 'inputTotal');
-    bind('#inOutputTotal', 'outputTotal');
+    bind('#inInputTotal', 'inputTotal', 1e6);    // Feld in Mio
+    bind('#inOutputTotal', 'outputTotal', 1e6);  // Feld in Mio
     $('#cacheMode').addEventListener('change', e => {
       state.cost.cacheMode = e.target.value;
       saveCost();
@@ -1850,7 +1898,7 @@
     renderChart();
     updateFilterList();
     renderCsvKpis();
-    updatePerCallHint();
+    updateUsageInfo();
     renderBuiltNote();
   }
 
@@ -1863,6 +1911,7 @@
     renderProviderFilter();
     renderChart();
     updateFilterList();
+    updateUsageInfo();
   }
 
   function renderBuiltNote() {
