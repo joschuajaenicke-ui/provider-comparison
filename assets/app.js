@@ -88,7 +88,7 @@
       'usage.cacheNone': 'kein Cache',
 
       'msg.reading': 'lese {name} …',
-      'msg.readOk': '{name} · {calls} Calls · Ø {in} Input, {out} Output · Cache-Quote {hit}',
+      'msg.readOk': '{name} · {calls} Calls gelesen',
       'msg.readErr': '✗ {name}: {msg}',
       'msg.fileError': '✗ Datei konnte nicht gelesen werden',
       'csv.missingColumn': 'Spalte fehlt: {cols}',
@@ -96,6 +96,11 @@
       'csv.noModel': 'keine Zeilen mit model_permaslug/tokens_*',
 
       'kpi.calls': 'Calls',
+      'kpi.callsInLog': 'Calls im Log',
+      'log.scope': 'Log auf dieses Modell gefiltert: {n} von {total} Calls ({models} Modell(e) im Log).',
+      'log.noScope': 'kein Log-Eintrag für dieses Modell',
+      'log.notInLogTitle': 'Dieses Modell kommt im Log nicht vor',
+      'log.notInLogText': 'Das Log enthält {calls} Calls zu {models} Modell(en), aber keine zu {model}. Die Kostenspalten bleiben deshalb leer — die Tokenmengen eines anderen Modells auf diese Preise zu übertragen wäre ein Modellvergleich und würde nichts aussagen. Wähle ein Modell aus dem Log oder setze das Log zurück, um mit eigenen Werten zu rechnen.',
       'kpi.inputPerCall': 'Input / Call',
       'kpi.outputPerCall': 'Output / Call',
       'kpi.cacheHit': 'Cache-Quote',
@@ -235,7 +240,7 @@
       'usage.cacheNone': 'no cache',
 
       'msg.reading': 'reading {name} …',
-      'msg.readOk': '{name} · {calls} calls · avg. {in} input, {out} output · cache hit {hit}',
+      'msg.readOk': '{name} · {calls} calls read',
       'msg.readErr': '✗ {name}: {msg}',
       'msg.fileError': '✗ could not read the file',
       'csv.missingColumn': 'missing column: {cols}',
@@ -243,6 +248,11 @@
       'csv.noModel': 'no rows with model_permaslug/tokens_*',
 
       'kpi.calls': 'Calls',
+      'kpi.callsInLog': 'Calls in log',
+      'log.scope': 'Log filtered to this model: {n} of {total} calls ({models} model(s) in log).',
+      'log.noScope': 'no log entry for this model',
+      'log.notInLogTitle': 'This model does not appear in the log',
+      'log.notInLogText': 'The log holds {calls} calls across {models} model(s), but none for {model}. The cost columns therefore stay empty — projecting another model\u2019s token counts onto these prices would be a model comparison and would say nothing. Pick a model from the log, or reset the log to calculate with your own numbers.',
       'kpi.inputPerCall': 'Input / call',
       'kpi.outputPerCall': 'Output / call',
       'kpi.cacheHit': 'Cache hit',
@@ -481,7 +491,10 @@
 
   // Achsenbeschriftung; die Kostenspalte nennt die Bezugsgröße mit.
   function metricLabel(key) {
-    if (key === 'projTotal') return t('metric.projTotalAxis', { n: fmtInt(costBase()) });
+    if (key === 'projTotal') {
+      const base = costBase();
+      return base ? t('metric.projTotalAxis', { n: fmtInt(base) }) : t('metric.projTotal');
+    }
     return t(METRIC_LABEL[key] || 'metric.proj1000');
   }
 
@@ -529,16 +542,36 @@
 
   /* ---------------------------------------------------------- Kostenrechnung */
 
-  // Nutzungsprofil: entweder aus der CSV oder aus den absoluten Eingabefeldern.
+  // Ein Log ist immer auf ein Modell bezogen: die Preise gelten für die
+  // Tokenmengen, die bei genau diesem Modell angefallen sind. Alles andere
+  // wäre ein Vergleich von Modellen — und der sagt hier nichts aus.
+  const normSlug = s => String(s || '').replace(/-\d{6,8}$/, '');
+
+  function logEntryFor(model) {
+    if (!state.profile || !model) return null;
+    const keys = Object.keys(state.profile.models);
+    const key = keys.find(k => k === model.id || k === model.slug
+      || normSlug(k) === normSlug(model.slug) || normSlug(k) === normSlug(model.id));
+    return key ? { key, ...state.profile.models[key] } : null;
+  }
+
+  // Nutzungsprofil: aus dem Log des gewählten Modells oder aus den Eingabefeldern.
   function profile() {
-    if (state.profile) {
+    const entry = logEntryFor(currentModel());
+    if (state.profile && entry) {
+      const promptTotal = entry.in + entry.cached;
       return {
-        calls: Math.max(1, state.profile.calls),
-        prompt: state.profile.prompt,           // pro Call
-        completion: state.profile.completion,   // pro Call
-        logHit: state.profile.logHit,
+        calls: Math.max(1, entry.calls),
+        prompt: promptTotal / entry.calls,        // pro Call
+        completion: entry.out / entry.calls,      // pro Call
+        logHit: promptTotal ? (entry.cached / promptTotal) * 100 : 0,
         source: 'csv',
+        empty: false,
       };
+    }
+    // Log geladen, aber dieses Modell kommt darin nicht vor
+    if (state.profile) {
+      return { calls: 0, prompt: 0, completion: 0, logHit: null, source: 'csv', empty: true };
     }
     const calls = Math.max(1, state.cost.calls || 1);
     return {
@@ -580,7 +613,9 @@
 
   // Bezugsgröße der Kostenspalten
   function costBase() {
-    return state.profile ? Math.max(1, state.profile.calls) : Math.max(1, state.cost.calls || 1);
+    const entry = logEntryFor(currentModel());
+    if (state.profile) return entry ? Math.max(1, entry.calls) : 0;
+    return Math.max(1, state.cost.calls || 1);
   }
 
   /* --------------------------------------------------------------- Datenzugriff */
@@ -602,6 +637,7 @@
       return {
         ...ep,
         _i: i,
+        _noCost: !!prof.empty,
         _cost: c,
         _proj: c.total,
         _proj1000: c.per1000,
@@ -666,6 +702,8 @@
     return t(COL_LABEL[col.key]);
   }
 
+  const NOCOST = '<span class="dim">—</span>';
+
   function cellValue(row, key) {
     switch (key) {
       case 'quant':
@@ -675,11 +713,11 @@
       case 'in': return fmtPrice(row.in);
       case 'out': return fmtPrice(row.out);
       case 'cache': return row.cache == null ? '<span class="dim">—</span>' : fmtPrice(row.cache);
-      case 'projTotal': return `<span class="num-strong">${fmtPrice(row._proj)}</span>`;
-      case 'proj1000': return `<span class="num-strong">${fmtPrice(row._proj1000)}</span>`;
-      case 'projIn': return `<span class="dim">${fmtPrice(row._projIn)}</span>`;
-      case 'projCache': return `<span class="dim">${fmtPrice(row._projCache)}</span>`;
-      case 'projOut': return `<span class="dim">${fmtPrice(row._projOut)}</span>`;
+      case 'projTotal': return row._noCost ? NOCOST : `<span class="num-strong">${fmtPrice(row._proj)}</span>`;
+      case 'proj1000': return row._noCost ? NOCOST : `<span class="num-strong">${fmtPrice(row._proj1000)}</span>`;
+      case 'projIn': return row._noCost ? NOCOST : `<span class="dim">${fmtPrice(row._projIn)}</span>`;
+      case 'projCache': return row._noCost ? NOCOST : `<span class="dim">${fmtPrice(row._projCache)}</span>`;
+      case 'projOut': return row._noCost ? NOCOST : `<span class="dim">${fmtPrice(row._projOut)}</span>`;
       case 'ctx': return fmtCtx(row.ctx);
       case 'toks': return row.toks == null ? '<span class="dim">—</span>' : fmtInt(row.toks);
       case 'ttft': return row.ttft == null ? '<span class="dim">—</span>' : fmtMs(row.ttft);
@@ -752,7 +790,8 @@
           if (row.toks != null && row.toks === fastest) badges.push(`<span class="badge badge--good">${escapeHtml(t('badge.fastest'))}</span>`);
           if (row._proj1000 === cheapest) badges.push(`<span class="badge badge--good">${escapeHtml(t('badge.cheapest'))}</span>`);
           if (row.status !== 0) badges.push(`<span class="badge badge--bad">${escapeHtml(t('badge.degraded'))}</span>`);
-          if (state.profile && state.profile.provs && state.profile.provs[row.provider]) {
+          const entry = logEntryFor(currentModel());
+          if (entry && entry.provs && entry.provs[row.provider]) {
             badges.push(`<span class="badge">${escapeHtml(t('badge.inLog'))}</span>`);
           }
           const sub = row.tag && row._multiProvider
@@ -932,11 +971,11 @@
           case 'in': return dec(row.in);
           case 'out': return dec(row.out);
           case 'cache': return row.cache == null ? '' : dec(row.cache);
-          case 'projTotal': return dec(round4(row._proj));
-          case 'proj1000': return dec(round4(row._proj1000));
-          case 'projIn': return dec(round4(row._projIn));
-          case 'projCache': return dec(round4(row._projCache));
-          case 'projOut': return dec(round4(row._projOut));
+          case 'projTotal': return row._noCost ? '' : dec(round4(row._proj));
+          case 'proj1000': return row._noCost ? '' : dec(round4(row._proj1000));
+          case 'projIn': return row._noCost ? '' : dec(round4(row._projIn));
+          case 'projCache': return row._noCost ? '' : dec(round4(row._projCache));
+          case 'projOut': return row._noCost ? '' : dec(round4(row._projOut));
           case 'ctx': return row.ctx ?? '';
           case 'toks': return row.toks == null ? '' : dec(row.toks);
           case 'ttft': return row.ttft == null ? '' : dec(row.ttft);
@@ -1321,6 +1360,9 @@
     $('#pickerClear').hidden = true;
     closePicker();
     render();
+    // Das Log gilt je Modell: Werte und Kennzahlen neu beziehen
+    syncCostInputs(!!state.profile);
+    renderCsvKpis();
   }
 
   function initPicker() {
@@ -1406,11 +1448,14 @@
       st.tok.cached += cached;
       st.tok.out += comp;
       st.tok.reasoning += val(r, I.reasoning);
-      if (st.hasCost) st.logged += val(r, I.cost);
-      const m = st.models[model] || (st.models[model] = { calls: 0, in: 0, cached: 0, out: 0 });
+      const rowCost = st.hasCost ? val(r, I.cost) : 0;
+      if (st.hasCost) st.logged += rowCost;
+      const m = st.models[model] || (st.models[model] = { calls: 0, in: 0, cached: 0, out: 0, logged: 0, provs: {} });
       m.calls++; m.in += prompt - cached; m.cached += cached; m.out += comp;
+      m.logged += rowCost;
       const prov = (r[I.prov] || '?').trim();
       st.provs[prov] = (st.provs[prov] || 0) + 1;
+      m.provs[prov] = (m.provs[prov] || 0) + 1;
       const ts = I.created >= 0 ? (r[I.created] || '').slice(0, 16) : '';
       if (ts) {
         if (!st.from || ts < st.from) st.from = ts;
@@ -1439,19 +1484,13 @@
       name: fileName,
     };
 
-    // Eingabefelder zeigen die Log-Summen und sind gesperrt
+    // Eingabefelder zeigen die Log-Summen des gewählten Modells und sind gesperrt
     syncCostInputs(true);
     if (state.cost.cacheMode === 'none') setCacheMode('provider');
 
     const msg = $('#csvMsg');
     msg.className = 'msg is-ok';
-    msg.textContent = t('msg.readOk', {
-      name: fileName,
-      calls: fmtInt(st.calls),
-      in: fmtInt(state.profile.prompt),
-      out: fmtInt(state.profile.completion),
-      hit: fmtPct(state.profile.logHit),
-    });
+    msg.textContent = t('msg.readOk', { name: fileName, calls: fmtInt(st.calls) });
 
     renderCsvKpis();
     $('#csvReset').hidden = false;
@@ -1469,36 +1508,70 @@
     const p = state.profile;
     const box = $('#csvKpis');
     if (!p) { box.innerHTML = ''; return; }
-    const models = Object.entries(p.models).sort((a, b) => b[1].calls - a[1].calls);
-    const top = models[0];
-    const kpi = (k, v) => `<div class="kpi"><span class="kpi__k">${escapeHtml(k)}</span><span class="kpi__v">${v}</span></div>`;
-    const parts = [
-      kpi(t('kpi.calls'), fmtInt(p.calls)),
-      kpi(t('kpi.inputPerCall'), fmtInt(p.prompt)),
-      kpi(t('kpi.outputPerCall'), fmtInt(p.completion)),
-      kpi(t('kpi.cacheHit'), fmtPct(p.logHit)),
-      kpi(t('kpi.period'), p.from ? fmtSpan(p.from, p.to) : '—'),
-    ];
-    if (p.hasCost) parts.push(kpi(t('kpi.logged'), fmtPrice(p.logged)));
-    if (p.hasCost && p.calls) parts.push(kpi(t('kpi.loggedPerCall'), fmtPrice(p.logged / p.calls)));
-    if (models.length > 1) parts.push(kpi(t('kpi.models'), String(models.length)));
-    box.innerHTML = parts.join('');
 
-    // Hinweis, wenn das Log ein anderes Modell nutzt als die Ansicht.
-    // Die CSV enthält den datierten Permaslug (…-20261017), die Seite arbeitet
-    // mit der Modell-Kennung — deshalb über id UND slug suchen.
-    const match = top && state.data.models.find(m => m.id === top[0] || m.slug === top[0]);
-    if (match && match.id !== state.modelId) {
+    const model = currentModel();
+    const entry = logEntryFor(model);
+    const kpi = (k, v) => `<div class="kpi"><span class="kpi__k">${escapeHtml(k)}</span><span class="kpi__v">${v}</span></div>`;
+    const modelCount = Object.keys(p.models).length;
+    const top = Object.entries(p.models).sort((a, b) => b[1].calls - a[1].calls)[0];
+    const switchBtn = (() => {
+      if (!top) return null;
+      // Zeigt das Log bereits auf das gewählte Modell, gibt es nichts zu wechseln
+      const cur = currentModel();
+      if (cur && (cur.id === top[0] || cur.slug === top[0]
+        || normSlug(cur.slug) === normSlug(top[0]) || normSlug(cur.id) === normSlug(top[0]))) {
+        return null;
+      }
+      const m = state.data.models.find(x => x.id === top[0])
+        || state.data.models.find(x => x.slug === top[0])
+        || state.data.models.find(x => normSlug(x.slug) === normSlug(top[0]));
+      if (!m || m.id === state.modelId) return null;
       const btn = document.createElement('button');
       btn.className = 'btn';
       btn.type = 'button';
-      btn.textContent = t('kpi.switchTo', { name: match.name || match.id });
-      btn.addEventListener('click', () => selectModel(match.id));
+      btn.textContent = t('kpi.switchTo', { name: m.name || m.id });
+      btn.addEventListener('click', () => selectModel(m.id));
       const wrap = document.createElement('div');
       wrap.className = 'kpi';
       wrap.append(btn);
-      box.append(wrap);
+      return wrap;
+    })();
+
+    // Modell nicht im Log: dann gibt es keine Grundlage für die Kostenspalten
+    if (!entry) {
+      box.innerHTML = `<div class="log-warn">
+        <strong>${escapeHtml(t('log.notInLogTitle'))}</strong>
+        <span>${escapeHtml(t('log.notInLogText', {
+          model: model ? model.id : '?',
+          calls: fmtInt(p.calls),
+          models: fmtInt(modelCount),
+        }))}</span>
+      </div>`;
+      if (switchBtn) box.append(switchBtn);
+      return;
     }
+
+    const promptTotal = entry.in + entry.cached;
+    const logHit = promptTotal ? (entry.cached / promptTotal) * 100 : 0;
+    const parts = [
+      kpi(t('kpi.callsInLog'), fmtInt(entry.calls)),
+      kpi(t('kpi.inputPerCall'), fmtInt(promptTotal / entry.calls)),
+      kpi(t('kpi.outputPerCall'), fmtInt(entry.out / entry.calls)),
+      kpi(t('kpi.cacheHit'), fmtPct(logHit)),
+    ];
+    if (p.hasCost) parts.push(kpi(t('kpi.logged'), fmtPrice(entry.logged)));
+    if (p.hasCost && entry.calls) parts.push(kpi(t('kpi.loggedPerCall'), fmtPrice(entry.logged / entry.calls)));
+    if (p.from) parts.push(kpi(t('kpi.period'), fmtSpan(p.from, p.to)));
+
+    // Wenn das Log mehrere Modelle enthält: sagen, welcher Ausschnitt gilt
+    const scope = modelCount > 1 || entry.calls !== p.calls
+      ? `<div class="log-scope">${escapeHtml(t('log.scope', {
+          n: fmtInt(entry.calls), total: fmtInt(p.calls), models: fmtInt(modelCount),
+        }))}</div>`
+      : '';
+
+    box.innerHTML = parts.join('') + scope;
+    if (switchBtn) box.append(switchBtn);
   }
 
   function resetProfile() {
@@ -1566,10 +1639,16 @@
   const toMio = v => Math.round(((v || 0) / 1e6) * 1000) / 1000;
 
   function syncCostInputs(disabled) {
-    const p = state.profile;
-    $('#inCalls').value = Math.round(p ? p.calls : state.cost.calls);
-    $('#inInputTotal').value = toMio(p ? p.inputTotal : state.cost.inputTotal);
-    $('#inOutputTotal').value = toMio(p ? p.outputTotal : state.cost.outputTotal);
+    if (state.profile) {
+      const e = logEntryFor(currentModel());
+      $('#inCalls').value = e ? Math.round(e.calls) : 0;
+      $('#inInputTotal').value = e ? toMio(e.in + e.cached) : 0;
+      $('#inOutputTotal').value = e ? toMio(e.out) : 0;
+    } else {
+      $('#inCalls').value = Math.round(state.cost.calls);
+      $('#inInputTotal').value = toMio(state.cost.inputTotal);
+      $('#inOutputTotal').value = toMio(state.cost.outputTotal);
+    }
     ['#inCalls', '#inInputTotal', '#inOutputTotal'].forEach(sel => { $(sel).disabled = !!disabled; });
     updateUsageInfo();
   }
@@ -1577,7 +1656,9 @@
   // Absolute Summen des aktuellen Profils (aus CSV oder aus den Feldern)
   function profileTotals() {
     if (state.profile) {
-      return { calls: state.profile.calls, input: state.profile.inputTotal, output: state.profile.outputTotal };
+      const e = logEntryFor(currentModel());
+      if (!e) return { calls: 0, input: 0, output: 0 };
+      return { calls: e.calls, input: e.in + e.cached, output: e.out };
     }
     const calls = Math.max(0, Number($('#inCalls').value) || 0);
     return {
@@ -1601,6 +1682,16 @@
   function updateUsageInfo() {
     const el = $('#infoPerCall');
     if (!el) return;
+
+    // Log geladen, aber kein Eintrag für dieses Modell
+    if (state.profile && !logEntryFor(currentModel())) {
+      $('#infoPerCall').textContent = '—';
+      $('#infoRatio').textContent = '—';
+      $('#infoCache').textContent = '—';
+      $('#infoCacheNote').textContent = t('log.noScope');
+      return;
+    }
+
     const { calls, input, output } = profileTotals();
 
     el.textContent = calls

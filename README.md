@@ -15,7 +15,7 @@ Browser und sendet nichts.
 | Tabelle | Ein Endpoint je Zeile: Preise, Kontext, tok/s, TTFT, Uptime, **Cache-Quote je Anbieter**, **Kosten gesamt** und **Kosten je 1.000 Calls** |
 | Spaltenfilter | Jede Spalte ein- und ausblendbar, sechs Spalten-Sets |
 | Anbieterfilter | Einzelne Anbieter aus Tabelle und Grafik ausblenden, mit Suche und „alle/keine“ |
-| Nutzungsprofil | Absolute Tokenmengen (Calls, Input gesamt, Output gesamt) oder Activity-CSV — beides an einer Stelle oberhalb der Tabelle |
+| Nutzungsprofil | Absolute Tokenmengen (Calls, Input in Mio, Output in Mio) oder Activity-CSV — an einer Stelle oberhalb der Tabelle. Das Log wird auf das gewählte Modell gefiltert: Tokenmengen eines anderen Modells auf fremde Preise zu übertragen wäre ein Modellvergleich und sagt nichts aus |
 | Grafik | Streudiagramm mit frei wählbaren Achsen, log-Skala, Farbe = Quantisierung, Größe = Uptime |
 | Schnellauswahl | Sechs Presets, die Achsen, Spalten und Sortierung zusammen umstellen — Preis/Leistung getrennt nach Listenpreis und Nutzungsprofil |
 | CSV-Export | Exportiert genau die angezeigte Liste (Sortierung, Spalten, Anbieterfilter) |
