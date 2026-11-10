@@ -98,12 +98,18 @@
   ];
 
   const PRESETS = [
-    { id: 'value', label: 'Preis/Leistung', x: 'proj', y: 'toks', cols: 'value', sort: 'proj', dir: 1 },
-    { id: 'latency', label: 'Latenz', x: 'ttft', y: 'toks', cols: 'perf', sort: 'ttft', dir: 1 },
-    { id: 'reliable', label: 'Zuverlässigkeit', x: 'uptime', y: 'ttft', cols: 'perf', sort: 'uptime', dir: -1 },
-    { id: 'cache', label: 'Cache-Nutzen', x: 'cache', y: 'hit', cols: 'price', sort: 'cache', dir: 1 },
-    { id: 'context', label: 'Kontext', x: 'ctx', y: 'in', cols: 'compact', sort: 'ctx', dir: -1 },
-    { id: 'all', label: 'Alles zeigen', x: 'proj', y: 'toks', cols: 'all', sort: 'proj', dir: 1 },
+    { id: 'value', label: 'Preis/Leistung', x: 'proj', y: 'toks', cols: 'value', sort: 'proj', dir: 1,
+      tip: 'Kosten gegen Geschwindigkeit: links unten ist günstig, oben ist schnell. Tabelle nach Kosten sortiert.' },
+    { id: 'latency', label: 'Latenz', x: 'ttft', y: 'toks', cols: 'perf', sort: 'ttft', dir: 1,
+      tip: 'Antwortzeit gegen Durchsatz: links kommt das erste Token früher, oben fließt der Text schneller.' },
+    { id: 'reliable', label: 'Zuverlässigkeit', x: 'uptime', y: 'ttft', cols: 'perf', sort: 'uptime', dir: -1,
+      tip: 'Uptime gegen Antwortzeit: oben rechts ist beides gut — selten Ausfälle und schnelle erste Antwort.' },
+    { id: 'cache', label: 'Cache-Nutzen', x: 'cache', y: 'hit', cols: 'price', sort: 'cache', dir: 1,
+      tip: 'Cache-Preis gegen Trefferquote: links hohe Quote bei niedrigem Preis spart am meisten — nur wirksam, wenn ein Cache-Tarif existiert.' },
+    { id: 'context', label: 'Kontext', x: 'ctx', y: 'in', cols: 'compact', sort: 'ctx', dir: -1,
+      tip: 'Kontextfenster gegen Input-Preis: wichtig, wenn lange Prompts oder ganze Dokumente hineinpassen müssen.' },
+    { id: 'all', label: 'Alles zeigen', x: 'proj', y: 'toks', cols: 'all', sort: 'proj', dir: 1,
+      tip: 'Blendet alle Spalten ein; Achsen wie bei Preis/Leistung.' },
   ];
 
   const LS = {
@@ -1164,11 +1170,12 @@
   function renderPresets() {
     const box = $('#presets');
     box.innerHTML = '<span class="presets__label">Schnellauswahl</span>' + PRESETS.map(p =>
-      `<button class="chip" type="button" data-id="${p.id}" aria-pressed="${state.preset === p.id}">${escapeHtml(p.label)}</button>`
+      `<button class="chip" type="button" data-id="${p.id}" data-tip="${escapeAttr(p.tip)}" aria-pressed="${state.preset === p.id}">${escapeHtml(p.label)}</button>`
     ).join('');
     $$('#presets .chip').forEach(btn => {
       btn.addEventListener('click', () => applyPreset(btn.dataset.id));
     });
+    bindTips(box);
   }
 
   function applyPreset(id) {

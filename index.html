@@ -161,8 +161,8 @@
         <label class="field">Y-Achse
           <select id="axisY"></select>
         </label>
-        <label class="check"><input type="checkbox" id="logX"> X logarithmisch</label>
-        <label class="check"><input type="checkbox" id="logY"> Y logarithmisch</label>
+        <label class="check" title="Logarithmische Achse: gleiche Abstände bedeuten gleichen Faktor. Sinnvoll bei Preisen, die über mehrere Größenordnungen streuen."><input type="checkbox" id="logX"> X logarithmisch</label>
+        <label class="check" title="Logarithmische Achse: gleiche Abstände bedeuten gleichen Faktor. Sinnvoll bei Preisen, die über mehrere Größenordnungen streuen."><input type="checkbox" id="logY"> Y logarithmisch</label>
         <span class="hint" id="chartNote"></span>
       </div>
 
@@ -214,13 +214,13 @@
         schreibt nichts in eine Konfiguration; sie erzeugt nur Text zum Kopieren.
       </p>
       <div class="rule-row">
-        <label class="field">mind. tok/s
+        <label class="field" title="Endpoints, die diesen Durchsatz nicht erreichen, landen in der ignore-Liste.">mind. tok/s
           <input type="number" id="ruleToks" value="0" min="0" step="5" inputmode="numeric">
         </label>
-        <label class="field">höchstens TTFT (ms)
+        <label class="field" title="Endpoints, deren erste Antwort länger dauert, landen in der ignore-Liste.">höchstens TTFT (ms)
           <input type="number" id="ruleTtft" value="5000" min="0" step="100" inputmode="numeric">
         </label>
-        <label class="field">Uptime ab (%)
+        <label class="field" title="Endpoints mit schlechterer Uptime landen in der ignore-Liste.">Uptime ab (%)
           <input type="number" id="ruleUptime" value="0" min="0" max="100" step="1" inputmode="numeric">
         </label>
       </div>
