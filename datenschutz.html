@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-lang="de">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,11 +18,17 @@
           <path d="M2 12.5 6.5 7l3 3L14 4"/>
         </svg>
       </span>
-      Provider-Vergleich
+      <span data-lang-block="de">Provider-Vergleich</span>
+      <span data-lang-block="en">Provider Comparison</span>
       <span class="brand__sub">OpenRouter</span>
     </a>
     <nav class="site-nav" aria-label="Hauptnavigation">
-      <a href="index.html">Zurück zum Vergleich</a>
+      <a href="index.html" data-lang-block="de">Zurück zum Vergleich</a>
+      <a href="index.html?lang=en" data-lang-block="en">Back to the comparison</a>
+      <div class="lang-switch" role="group" aria-label="Sprache / Language">
+        <button type="button" data-lang="de" aria-pressed="true">DE</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </div>
     </nav>
   </div>
 </header>
@@ -30,17 +36,23 @@
 <main>
   <section class="intro intro--single">
     <div>
-      <h1>Datenschutz</h1>
-      <p class="intro__lead">
+      <h1 data-lang-block="de">Datenschutz</h1>
+      <h1 data-lang-block="en">Privacy</h1>
+      <p class="intro__lead" data-lang-block="de">
         Diese Seite ist ein rein statisches Werkzeug. Es gibt kein Konto, keine Anmeldung,
         keine Datenbank und keine Auswertung von Besucherverhalten.
+      </p>
+      <p class="intro__lead" data-lang-block="en">
+        This page is a purely static tool. There is no account, no sign-in, no database and no
+        analysis of visitor behaviour.
       </p>
     </div>
   </section>
 
   <section class="section">
     <div class="methodik">
-      <article>
+      <!-- ---------- Deutsch ---------- -->
+      <article data-lang-block="de">
         <h3>Deine Activity-CSV</h3>
         <p>
           Wenn du eine Activity-CSV ablegst, wird sie ausschließlich im Arbeitsspeicher deines
@@ -53,18 +65,18 @@
         </p>
       </article>
 
-      <article>
+      <article data-lang-block="de">
         <h3>Lokale Einstellungen</h3>
         <p>
           Die Seite merkt sich im <code>localStorage</code> deines Browsers: das zuletzt gewählte
-          Modell, die Spaltenauswahl, die Achsenwahl, dein Kostenmodell und die helle oder dunkle
-          Darstellung. Das sind technisch notwendige Angaben, damit die Seite so aussieht, wie du
-          sie verlassen hast. Sie verlassen dein Gerät nicht und lassen sich jederzeit über die
-          Browsereinstellungen löschen.
+          Modell, die Sprache, die Spaltenauswahl, die Achsenwahl, dein Nutzungsprofil und die
+          helle oder dunkle Darstellung. Das sind technisch notwendige Angaben, damit die Seite so
+          aussieht, wie du sie verlassen hast. Sie verlassen dein Gerät nicht und lassen sich
+          jederzeit über die Browsereinstellungen löschen.
         </p>
       </article>
 
-      <article>
+      <article data-lang-block="de">
         <h3>Hosting und Server-Logfiles</h3>
         <p>
           Die Seite wird über GitHub Pages (GitHub Inc., USA) ausgeliefert. Beim Abruf verarbeitet
@@ -80,7 +92,7 @@
         </p>
       </article>
 
-      <article>
+      <article data-lang-block="de">
         <h3>Keine Anfragen an Dritte</h3>
         <p>
           Preise, Durchsatz und Latenz liegen als Datei <code>data/models.json</code> auf dieser
@@ -95,7 +107,16 @@
         </p>
       </article>
 
-      <article>
+      <article data-lang-block="de">
+        <h3>Export als CSV</h3>
+        <p>
+          Der Knopf „Als CSV exportieren“ erzeugt die Datei im Browser aus den bereits geladenen
+          Daten. Auch dabei wird nichts übertragen; die Datei landet direkt in deinem
+          Download-Ordner.
+        </p>
+      </article>
+
+      <article data-lang-block="de">
         <h3>Verantwortlich</h3>
         <p>
           [Vor- und Nachname, Anschrift, Kontaktadresse eintragen — vor der Veröffentlichung
@@ -108,7 +129,7 @@
         </p>
       </article>
 
-      <article>
+      <article data-lang-block="de">
         <h3>Deine Rechte</h3>
         <p>
           Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung,
@@ -120,6 +141,95 @@
           deinem Bundesland.
         </p>
       </article>
+
+      <!-- ---------- English ---------- -->
+      <article data-lang-block="en">
+        <h3>Your activity CSV</h3>
+        <p>
+          If you load an activity CSV, it is read and evaluated in your browser's memory only. It is
+          not uploaded, not stored and not passed to third parties. It is forgotten as soon as you
+          reload the page.
+        </p>
+        <p>
+          You can verify this: open the developer tools (F12), switch to the “Network” tab and load a
+          CSV. No request containing your data appears.
+        </p>
+      </article>
+
+      <article data-lang-block="en">
+        <h3>Local settings</h3>
+        <p>
+          The page stores the following in your browser's <code>localStorage</code>: the last
+          selected model, the language, the column selection, the axis selection, your usage profile
+          and the light or dark appearance. These are technically necessary so the page looks the
+          way you left it. They never leave your device and can be deleted at any time through your
+          browser settings.
+        </p>
+      </article>
+
+      <article data-lang-block="en">
+        <h3>Hosting and server logs</h3>
+        <p>
+          The site is served via GitHub Pages (GitHub Inc., USA). When you request it, the host
+          processes technically necessary connection data, in particular your IP address, date and
+          time, the requested file and the user agent. The legal basis is the legitimate interest in
+          a secure and stable operation (Art. 6(1)(f) GDPR). I have no access to and no insight into
+          these log files.
+        </p>
+        <p>
+          No cookies are set, there is no tracking, no analytics, no advertising and no external
+          fonts or scripts. All files are loaded from the same domain.
+        </p>
+      </article>
+
+      <article data-lang-block="en">
+        <h3>No requests to third parties</h3>
+        <p>
+          Prices, throughput and latency are shipped as the file <code>data/models.json</code> with
+          this page and loaded from here — not live from OpenRouter. Using the page creates no
+          connections to OpenRouter or any other server.
+        </p>
+        <p>
+          This is technically enforced by a Content-Security-Policy in the page head:
+          <code>connect-src 'self'</code> allows the browser to connect to its own origin only. Even
+          if a script tried to send your data somewhere, the browser would block it.
+        </p>
+      </article>
+
+      <article data-lang-block="en">
+        <h3>CSV export</h3>
+        <p>
+          The “Export as CSV” button builds the file in your browser from data that is already
+          loaded. Nothing is transmitted here either; the file goes straight to your download
+          folder.
+        </p>
+      </article>
+
+      <article data-lang-block="en">
+        <h3>Controller</h3>
+        <p>
+          [Enter name, postal address and contact address before publishing.]
+        </p>
+        <p>
+          Because this offering is free, without advertising and without a commercial operation,
+          § 5 DDG (German digital services act) does not require an imprint. The details above serve
+          transparency under Art. 13 GDPR. This English text is a translation; the German version is
+          the authoritative one.
+        </p>
+      </article>
+
+      <article data-lang-block="en">
+        <h3>Your rights</h3>
+        <p>
+          You have the right to access, rectification, erasure, restriction of processing, data
+          portability and objection. Since this page itself collects or stores no personal data, in
+          practice this only concerns the host's server log files.
+        </p>
+        <p>
+          You may lodge a complaint with a data protection supervisory authority, usually in your
+          federal state.
+        </p>
+      </article>
     </div>
   </section>
 </main>
@@ -127,9 +237,11 @@
 <footer class="site-footer">
   <div class="site-footer__inner">
     <div class="site-footer__legal">
-      <span>Stand: <span id="stand">—</span></span>
+      <span data-lang-block="de">Stand: <span id="stand">—</span></span>
+      <span data-lang-block="en">As of: <span id="standEn">—</span></span>
       <span class="spacer"></span>
-      <a href="index.html">Zurück zum Vergleich</a>
+      <a href="index.html" data-lang-block="de">Zurück zum Vergleich</a>
+      <a href="index.html?lang=en" data-lang-block="en">Back to the comparison</a>
     </div>
   </div>
 </footer>

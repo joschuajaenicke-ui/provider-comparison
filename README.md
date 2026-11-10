@@ -12,26 +12,36 @@ Browser und sendet nichts.
 | Bereich | Funktion |
 |---|---|
 | Modellsuche | Alle Modelle aus OpenRouter durchsuchbar (Name, Kennung, Tippfehler-tolerant) |
-| Tabelle | Ein Endpoint je Zeile: Preise, Kontext, tok/s, TTFT, Uptime, Cache-Quote, Kosten |
-| Spaltenfilter | Jede Spalte ein- und ausblendbar, vier Spalten-Presets |
-| Kostenmodell | Calls, Input-/Output-Token pro Call, Cache-Quote → „Kosten je n Calls“ |
+| Tabelle | Ein Endpoint je Zeile: Preise, Kontext, tok/s, TTFT, Uptime, Cache-Quote, **Kosten gesamt** und **Kosten je 1.000 Calls** |
+| Spaltenfilter | Jede Spalte ein- und ausblendbar, sechs Spalten-Sets |
+| Anbieterfilter | Einzelne Anbieter aus Tabelle und Grafik ausblenden, mit Suche und „alle/keine“ |
+| Nutzungsprofil | Absolute Tokenmengen (Calls, Input gesamt, Output gesamt) oder Activity-CSV — beides an einer Stelle oberhalb der Tabelle |
 | Grafik | Streudiagramm mit frei wählbaren Achsen, log-Skala, Farbe = Quantisierung, Größe = Uptime |
-| Schnellauswahl | Sechs Presets, die Achsen, Spalten und Sortierung zusammen umstellen |
-| Nutzungsprofil | Activity-CSV aus OpenRouter wird lokal ausgewertet und ersetzt die Annahmen |
+| Schnellauswahl | Sechs Presets, die Achsen, Spalten und Sortierung zusammen umstellen — Preis/Leistung getrennt nach Listenpreis und Nutzungsprofil |
+| CSV-Export | Exportiert genau die angezeigte Liste (Sortierung, Spalten, Anbieterfilter) |
 | Filterliste | `ignore`/`only`-Liste für `provider_routing` — bewusst untergeordnet, nur zum Kopieren |
+| Sprachen | Deutsch und Englisch, umschaltbar im Kopf; Auswahl bleibt lokal gespeichert |
 
 ## Aufbau
 
 ```
-index.html              Seite (Struktur, Erklärtexte)
-datenschutz.html        Datenschutzerklärung
+index.html              Seite (Struktur, zweisprachige Erklärtexte)
+datenschutz.html        Datenschutzerklärung (deutsch und englisch)
 assets/style.css        Tokens, Layout, Tabelle, Grafik
-assets/app.js           gesamte Logik: Suche, Tabelle, Grafik, CSV, Filterliste
+assets/app.js           gesamte Logik: Texte, Suche, Tabelle, Filter, Export, Grafik, CSV
+assets/datenschutz.js   Sprache und Datenstand für die Datenschutzseite
 assets/favicon.svg
 data/models.json        Datenstand (wird vom Generator geschrieben)
 tools/build_data.py     holt die Daten von OpenRouter und schreibt data/models.json
 .github/workflows/      tägliche Aktualisierung des Datenstands
 ```
+
+## Bedienung in zwei Sätzen
+
+Tokenmengen aus dem OpenRouter-Dashboard unter **Dashboard → Logs → Menü (⋯) → Export**
+herunterladen und im Feld „Nutzungsprofil“ ablegen — oder die Summen (Calls, Input-Token,
+Output-Token) direkt eintragen. Alles darunter rechnet sofort mit diesen Werten; „Als CSV
+exportieren“ gibt die aktuelle Tabelle mit allen Filtern zurück.
 
 ## Lokal ansehen
 

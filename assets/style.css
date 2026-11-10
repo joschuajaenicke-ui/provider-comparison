@@ -111,6 +111,11 @@
 .qdot.q-int4 { background: var(--q-int4); }
 .qdot.q-unknown { background: var(--q-unknown); }
 
+/* Übersetzungen stehen doppelt im Markup; je nach data-lang wird eine Fassung
+   ausgeblendet. Kein JS nötig, kein Nachladen, kein Flackern. */
+html[data-lang="de"] [data-lang-block="en"],
+html[data-lang="en"] [data-lang-block="de"] { display: none !important; }
+
 /* Kleine Helfer (keine Inline-Styles: die CSP erlaubt nur eigene Stylesheets) */
 .colchips { display: contents; }
 .intro--single { grid-template-columns: 1fr; }
@@ -304,20 +309,10 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 24px 72px; }
 }
 :root[data-theme="dark"] .chip[aria-pressed="true"] { color: #06201e; }
 
-/* --- Kostenmodell --------------------------------------------------------- */
-.model-bar {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  border-bottom: 0; padding: 12px 16px;
-}
-.model-bar__title {
-  font-size: 11px; font-weight: 600; letter-spacing: .07em;
-  text-transform: uppercase; color: var(--muted); flex-basis: 100%;
-}
+/* --- Nutzungsprofil (Kostenmodell + CSV, einmal oberhalb der Tabelle) ----- */
 .field { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-2); }
 .field input[type="number"] {
-  width: 88px; padding: 6px 8px; border-radius: 6px;
+  width: 118px; padding: 6px 8px; border-radius: 6px;
   border: 1px solid var(--border-strong); background: var(--surface-2);
   font-variant-numeric: tabular-nums;
 }
@@ -326,17 +321,17 @@ main { max-width: var(--maxw); margin: 0 auto; padding: 0 24px 72px; }
   padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border-strong);
   background: var(--surface-2);
 }
-.model-bar__csv {
-  margin-left: auto; display: flex; align-items: center; gap: 10px;
-}
-.drop-mini {
-  border: 1px dashed var(--border-strong); border-radius: var(--radius);
-  padding: 7px 12px; font-size: 12.5px; color: var(--muted);
-  background: var(--surface-2); cursor: pointer; display: inline-flex;
-  align-items: center; gap: 7px;
-}
-.drop-mini:hover, .drop-mini.is-over { border-color: var(--accent); color: var(--accent-ink); }
-.drop-mini.is-loaded { border-style: solid; border-color: var(--accent); color: var(--accent-ink); }
+
+.usage-panel { margin-bottom: 18px; transition: border-color .12s ease, box-shadow .12s ease; }
+.usage-panel.is-over { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.usage-panel__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin-bottom: 14px; }
+.usage-panel__head h3 { flex: none; }
+.usage-panel__head .hint { flex: 1 1 340px; max-width: 78ch; }
+.usage-grid { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+.usage-derived { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.usage-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 14px; }
+.usage-drop-hint { font-size: 12.5px; color: var(--muted); }
+.usage-note { margin-top: 12px; max-width: 92ch; }
 
 /* --- Tabelle -------------------------------------------------------------- */
 .table-card {
@@ -465,15 +460,6 @@ tbody tr.is-excluded td:first-child { text-decoration: line-through; text-decora
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--radius-lg); padding: 18px;
 }
-.drop {
-  border: 1.5px dashed var(--border-strong); border-radius: var(--radius);
-  padding: 26px 20px; text-align: center; cursor: pointer;
-  background: var(--surface-2); transition: border-color .12s ease, background .12s ease;
-}
-.drop:hover, .drop.is-over { border-color: var(--accent); background: var(--accent-soft); }
-.drop strong { display: block; margin-bottom: 4px; font-weight: 600; }
-.drop span { color: var(--muted); font-size: 13px; }
-
 .kpis { display: flex; flex-wrap: wrap; gap: 10px 26px; margin-top: 16px; }
 .kpi { display: grid; gap: 1px; }
 .kpi__k { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
@@ -519,6 +505,55 @@ details.advanced > summary .hint { font-weight: 400; color: var(--muted); font-s
 }
 .btn:hover { border-color: var(--accent); color: var(--accent-ink); }
 .btn:disabled { opacity: .45; cursor: default; }
+.btn--primary {
+  background: var(--accent); border-color: var(--accent); color: #fff;
+  font-weight: 550; display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px;
+}
+.btn--primary:hover { background: var(--accent-ink); border-color: var(--accent-ink); color: #fff; }
+:root[data-theme="dark"] .btn--primary { color: #06201e; }
+.btn--tiny { padding: 3px 9px; font-size: 11.5px; }
+.btn--filter { display: inline-flex; align-items: center; gap: 6px; }
+.btn--export { display: inline-flex; align-items: center; gap: 6px; }
+.btn__count {
+  font-variant-numeric: tabular-nums; font-size: 11px; font-weight: 600;
+  background: var(--surface-3); border-radius: 999px; padding: 1px 6px; color: var(--muted);
+}
+
+.lang-switch {
+  display: inline-flex; border: 1px solid var(--border); border-radius: 7px;
+  overflow: hidden; margin-left: 6px; flex: none;
+}
+.lang-switch button {
+  border: 0; background: transparent; color: var(--muted); cursor: pointer;
+  font-size: 11.5px; font-weight: 600; letter-spacing: .04em; padding: 6px 8px;
+}
+.lang-switch button[aria-pressed="true"] { background: var(--surface-3); color: var(--ink); }
+.lang-switch button:hover { color: var(--ink); }
+
+/* Anbieterfilter: Panel öffnet nach oben, weil der Knopf unter der Tabelle sitzt */
+.provider-filter { position: relative; }
+.provider-panel {
+  position: absolute; z-index: 35; bottom: calc(100% + 6px); right: 0;
+  width: 286px; background: var(--surface); border: 1px solid var(--border-strong);
+  border-radius: var(--radius); box-shadow: 0 18px 40px -20px rgba(0, 0, 0, .35);
+  padding: 8px;
+}
+.provider-panel[hidden] { display: none; }
+.provider-panel__head { display: flex; flex-direction: column; gap: 6px; margin-bottom: 6px; }
+.provider-panel__search {
+  width: 100%; padding: 6px 8px; border-radius: 6px; font-size: 12.5px;
+  border: 1px solid var(--border-strong); background: var(--surface-2);
+}
+.provider-panel__bulk { display: flex; gap: 6px; }
+.provider-panel__list { max-height: 250px; overflow-y: auto; }
+.provider-opt {
+  display: flex; align-items: center; gap: 8px; padding: 4px 6px;
+  border-radius: 5px; cursor: pointer; font-size: 12.5px;
+}
+.provider-opt:hover { background: var(--surface-2); }
+.provider-opt__name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.provider-opt__eps { color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.provider-panel__empty { padding: 10px 6px; font-size: 12.5px; color: var(--muted); }
 
 /* --- Methodik ------------------------------------------------------------- */
 .methodik { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
@@ -554,18 +589,27 @@ details.advanced > summary .hint { font-weight: 400; color: var(--muted); font-s
   .brand__sub { display: none; }
   h1 { font-size: 23px; }
 }
-@media (max-width: 700px) {
+@media (max-width: 760px) {
   .site-header__inner { gap: 10px; }
   .brand { white-space: nowrap; font-size: 13.5px; gap: 8px; }
   .brand__mark { width: 22px; height: 22px; }
-  /* Auf schmalen Geräten entfällt der Sprung zum Seitenanfang — dafür bleibt
-     der Umschalter für das Farbschema erreichbar. */
+  /* Auf schmalen Geräten entfällt der Sprung zum Seitenanfang — dafür bleiben
+     Sprach- und Farbschema-Umschalter erreichbar. */
   .site-nav { gap: 0; }
   .site-nav a[href="#vergleich"] { display: none; }
   .site-nav a { padding: 6px 7px; font-size: 12.5px; white-space: nowrap; }
   .icon-btn { flex: none; }
-  .model-bar__csv { margin-left: 0; }
-  .field input[type="number"] { width: 74px; }
+  .field input[type="number"] { width: 96px; }
+}
+
+@media (max-width: 560px) {
+  /* Kopfzeile: Wortmarke, Sprache, Farbschema — die Abschnittslink entfallen,
+     die Seite ist kurz genug zum Scrollen. */
+  .site-nav a { display: none; }
+  .brand__sub { display: none; }
+  .usage-grid { gap: 10px 14px; }
+  .usage-panel { padding: 14px; }
+  .provider-panel { width: 258px; right: -8px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

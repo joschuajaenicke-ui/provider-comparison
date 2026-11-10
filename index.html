@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-lang="de">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,7 +16,8 @@
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-<a class="skip-link" href="#vergleich">Zum Vergleich springen</a>
+<a class="skip-link" href="#vergleich" data-lang-block="de">Zum Vergleich springen</a>
+<a class="skip-link" href="#vergleich" data-lang-block="en">Skip to the comparison</a>
 
 <header class="site-header">
   <div class="site-header__inner">
@@ -28,15 +29,24 @@
           <circle cx="9.5" cy="10" r="1.3" fill="currentColor" stroke="none"/>
         </svg>
       </span>
-      Provider-Vergleich
+      <span data-lang-block="de">Provider-Vergleich</span>
+      <span data-lang-block="en">Provider Comparison</span>
       <span class="brand__sub">OpenRouter</span>
     </a>
 
     <nav class="site-nav" aria-label="Hauptnavigation">
-      <a href="#vergleich">Vergleich</a>
-      <a href="#grafik">Grafik</a>
-      <a href="#nutzung">Nutzung</a>
-      <a href="#methodik">Methodik</a>
+      <a href="#vergleich" data-lang-block="de">Vergleich</a>
+      <a href="#vergleich" data-lang-block="en">Compare</a>
+      <a href="#grafik" data-lang-block="de">Grafik</a>
+      <a href="#grafik" data-lang-block="en">Chart</a>
+      <a href="#nutzung" data-lang-block="de">Nutzung</a>
+      <a href="#nutzung" data-lang-block="en">Usage</a>
+      <a href="#methodik" data-lang-block="de">Methodik</a>
+      <a href="#methodik" data-lang-block="en">Method</a>
+      <div class="lang-switch" role="group" aria-label="Sprache / Language">
+        <button type="button" id="langDe" data-lang="de" aria-pressed="true">DE</button>
+        <button type="button" id="langEn" data-lang="en" aria-pressed="false">EN</button>
+      </div>
       <button class="icon-btn" id="themeBtn" type="button" aria-label="Farbschema umschalten" title="Hell / dunkel umschalten">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
           <circle cx="8" cy="8" r="3.2"/>
@@ -49,37 +59,64 @@
 
 <main>
   <!-- ================= Was ist das hier ================= -->
-  <section class="intro" aria-labelledby="introTitle">
+  <section class="intro">
     <div>
-      <h1 id="introTitle">Welcher Anbieter lohnt sich für dieses Modell?</h1>
-      <p class="intro__lead">
+      <h1 data-lang-block="de">Welcher Anbieter lohnt sich für dieses Modell?</h1>
+      <h1 data-lang-block="en">Which provider is worth it for this model?</h1>
+
+      <p class="intro__lead" data-lang-block="de">
         Ein Modell wie <code>deepseek/deepseek-v4.1-flash</code> läuft bei OpenRouter nicht bei einem
         Anbieter, sondern bei Dutzenden — zu unterschiedlichen Preisen, Geschwindigkeiten und
         Ausfallquoten. Diese Seite stellt alle Anbieter eines Modells nebeneinander und rechnet die
         Preise auf ein Nutzungsprofil hoch, damit aus Listenpreisen eine Entscheidung wird.
       </p>
-      <p class="intro__lead">
+      <p class="intro__lead" data-lang-block="en">
+        A model like <code>deepseek/deepseek-v4.1-flash</code> is not served by one provider on
+        OpenRouter but by dozens — at different prices, speeds and outage rates. This page puts every
+        provider of a model side by side and projects the prices onto your own usage profile, so that
+        list prices become a decision.
+      </p>
+
+      <p class="intro__lead" data-lang-block="de">
         Alles läuft im Browser: die Modellwahl, die Auswertung deiner Activity-CSV, die Grafik.
         Nichts wird hochgeladen, es gibt kein Konto und keine Anmeldung.
       </p>
+      <p class="intro__lead" data-lang-block="en">
+        Everything runs in the browser: model selection, the evaluation of your activity CSV, the
+        chart. Nothing is uploaded, there is no account and no sign-in.
+      </p>
     </div>
+
     <dl class="intro__facts" id="introFacts">
-      <div class="fact"><dt>Daten</dt><dd id="factStamp">lade …</dd></div>
-      <div class="fact"><dt>Umfang</dt><dd id="factCounts">lade …</dd></div>
-      <div class="fact"><dt>Quelle</dt><dd>OpenRouter-Modell- und Endpoint-API, ohne Schlüssel abrufbar</dd></div>
+      <div class="fact">
+        <dt><span data-lang-block="de">Daten</span><span data-lang-block="en">Data</span></dt>
+        <dd id="factStamp">lade …</dd>
+      </div>
+      <div class="fact">
+        <dt><span data-lang-block="de">Umfang</span><span data-lang-block="en">Scope</span></dt>
+        <dd id="factCounts">lade …</dd>
+      </div>
+      <div class="fact">
+        <dt><span data-lang-block="de">Quelle</span><span data-lang-block="en">Source</span></dt>
+        <dd data-lang-block="de">OpenRouter-Modell- und Endpoint-API, ohne Schlüssel abrufbar</dd>
+        <dd data-lang-block="en">OpenRouter model and endpoint API, readable without a key</dd>
+      </div>
     </dl>
   </section>
 
   <!-- ================= Vergleich ================= -->
-  <section class="section" id="vergleich" aria-labelledby="vergleichTitle">
+  <section class="section" id="vergleich">
     <div class="section__head">
-      <h2 id="vergleichTitle">Anbieter im Vergleich</h2>
+      <h2 data-lang-block="de">Anbieter im Vergleich</h2>
+      <h2 data-lang-block="en">Providers compared</h2>
       <span class="hint" id="modelHint"></span>
     </div>
 
     <div class="toolbar">
       <div class="picker" id="picker">
-        <label class="picker__label" for="modelSearch">Modell suchen</label>
+        <label class="picker__label" for="modelSearch">
+          <span data-lang-block="de">Modell suchen</span><span data-lang-block="en">Search models</span>
+        </label>
         <div class="picker__field">
           <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
             <circle cx="7" cy="7" r="4.4"/><path d="M10.3 10.3 14 14"/>
@@ -95,41 +132,80 @@
       </div>
 
       <div class="presets" id="presets">
-        <span class="presets__label">Schnellauswahl</span>
+        <span class="presets__label" data-lang-block="de">Schnellauswahl</span>
+        <span class="presets__label" data-lang-block="en">Quick presets</span>
         <!-- Chips werden in app.js aus PRESETS erzeugt -->
       </div>
     </div>
 
-    <!-- Kostenmodell: Annahmen, mit denen die letzten Spalten gerechnet werden -->
-    <div class="model-bar" role="group" aria-labelledby="costModelTitle">
-      <span class="model-bar__title" id="costModelTitle">Kostenmodell — Grundlage der Spalte „Kosten je 1.000 Calls“</span>
+    <!-- ===== Nutzungsprofil: einmal, oberhalb der Tabelle ===== -->
+    <div class="panel usage-panel" id="nutzung">
+      <div class="usage-panel__head">
+        <h3 data-lang-block="de">Nutzungsprofil</h3>
+        <h3 data-lang-block="en">Usage profile</h3>
+        <p class="hint" data-lang-block="de">
+          Grundlage der Spalten „Kosten gesamt“ und „Kosten je 1.000 Calls“. Absolute Tokenmengen,
+          wie sie in deinem Dashboard stehen — keine Werte pro Call.
+        </p>
+        <p class="hint" data-lang-block="en">
+          Basis for the “Total cost” and “Cost per 1,000 calls” columns. Absolute token counts as
+          shown in your dashboard — not per-call values.
+        </p>
+      </div>
 
-      <label class="field">Calls
-        <input type="number" id="inCalls" value="1000" min="1" step="100" inputmode="numeric">
-      </label>
-      <label class="field">Input-Token / Call
-        <input type="number" id="inPrompt" value="2000" min="0" step="100" inputmode="numeric">
-      </label>
-      <label class="field">Output-Token / Call
-        <input type="number" id="inCompletion" value="500" min="0" step="50" inputmode="numeric">
-      </label>
-      <label class="field">Cache-Quote
-        <select id="cacheMode" title="Womit der Cache-Anteil des Inputs gerechnet wird">
-          <option value="provider" selected>je Anbieter (OpenRouter)</option>
-          <option value="log">aus dem Log</option>
-          <option value="none">kein Cache</option>
-        </select>
-      </label>
+      <div class="usage-grid">
+        <label class="field">Calls
+          <input type="number" id="inCalls" value="1000" min="1" step="100" inputmode="numeric">
+        </label>
+        <label class="field"><span data-lang-block="de">Input-Token gesamt</span><span data-lang-block="en">Input tokens total</span>
+          <input type="number" id="inInputTotal" value="2000000" min="0" step="10000" inputmode="numeric">
+        </label>
+        <label class="field"><span data-lang-block="de">Output-Token gesamt</span><span data-lang-block="en">Output tokens total</span>
+          <input type="number" id="inOutputTotal" value="500000" min="0" step="1000" inputmode="numeric">
+        </label>
+        <label class="field"><span data-lang-block="de">Cache</span><span data-lang-block="en">Cache</span>
+          <select id="cacheMode">
+            <option value="provider" selected data-i18n="cache.provider"></option>
+            <option value="log" data-i18n="cache.log"></option>
+            <option value="none" data-i18n="cache.none"></option>
+          </select>
+        </label>
+        <span class="usage-derived" id="perCallHint"></span>
+      </div>
 
-      <div class="model-bar__csv">
-        <button class="drop-mini" id="csvBtn" type="button">
+      <div class="usage-actions">
+        <button class="btn btn--primary" id="csvBtn" type="button">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
             <path d="M8 2v8M4.8 6.8 8 10l3.2-3.2M2.5 13.5h11"/>
           </svg>
-          <span id="csvBtnLabel">Activity-CSV laden</span>
+          <span data-lang-block="de">Activity-CSV laden</span>
+          <span data-lang-block="en">Load activity CSV</span>
         </button>
-        <button class="btn" id="csvReset" type="button" hidden>Zurücksetzen</button>
+        <button class="btn" id="csvReset" type="button" hidden>
+          <span data-lang-block="de">Zurücksetzen</span><span data-lang-block="en">Reset</span>
+        </button>
+        <span class="usage-drop-hint" data-lang-block="de">… oder die Datei hier irgendwo ablegen</span>
+        <span class="usage-drop-hint" data-lang-block="en">… or drop the file anywhere on this panel</span>
       </div>
+
+      <input type="file" id="csvFile" accept=".csv,text/csv" hidden>
+      <div class="msg" id="csvMsg" role="status" aria-live="polite"></div>
+      <div class="kpis" id="csvKpis"></div>
+
+      <p class="hint usage-note" data-lang-block="de">
+        Export in OpenRouter: <strong>Dashboard → Logs → Menü (⋯) → Export</strong>.
+        Erwartet werden die Spalten <code>tokens_prompt</code>, <code>tokens_completion</code>,
+        <code>model_permaslug</code>; optional <code>tokens_cached</code>,
+        <code>provider_name</code>, <code>cost_total</code>.
+        Die Datei wird nur im Arbeitsspeicher dieses Tabs gelesen und verlässt den Browser nicht.
+      </p>
+      <p class="hint usage-note" data-lang-block="en">
+        Export in OpenRouter: <strong>Dashboard → Logs → ⋯ menu → Export</strong>.
+        Expected columns: <code>tokens_prompt</code>, <code>tokens_completion</code>,
+        <code>model_permaslug</code>; optional <code>tokens_cached</code>,
+        <code>provider_name</code>, <code>cost_total</code>.
+        The file is read in this tab's memory only and never leaves the browser.
+      </p>
     </div>
 
     <div class="table-card">
@@ -140,36 +216,79 @@
         </table>
       </div>
     </div>
+
     <div class="table-foot">
-      <span class="table-foot__label">Spalten</span>
+      <span class="table-foot__label" data-lang-block="de">Spalten</span>
+      <span class="table-foot__label" data-lang-block="en">Columns</span>
       <div id="colChips" class="colchips"></div>
+
+      <div class="provider-filter" id="providerFilter">
+        <button class="btn btn--filter" id="providerBtn" type="button" aria-expanded="false" aria-controls="providerPanel"
+                data-tip-de="Blendet einzelne Anbieter aus der Tabelle und der Grafik aus." data-tip-en="Hides individual providers from the table and the chart.">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+            <path d="M2 4h12M4.5 8h7M7 12h2"/>
+          </svg>
+          <span data-lang-block="de">Anbieter</span><span data-lang-block="en">Providers</span>
+          <span class="btn__count" id="providerCount">0</span>
+        </button>
+        <div class="provider-panel" id="providerPanel" hidden>
+          <div class="provider-panel__head">
+            <input type="search" id="providerSearch" class="provider-panel__search" autocomplete="off" placeholder="Anbieter filtern …">
+            <div class="provider-panel__bulk">
+              <button class="btn btn--tiny" type="button" id="providerAll" data-lang-block="de">Alle</button>
+              <button class="btn btn--tiny" type="button" id="providerAllEn" data-lang-block="en">All</button>
+              <button class="btn btn--tiny" type="button" id="providerNone" data-lang-block="de">Keine</button>
+              <button class="btn btn--tiny" type="button" id="providerNoneEn" data-lang-block="en">None</button>
+            </div>
+          </div>
+          <div class="provider-panel__list" id="providerList"></div>
+        </div>
+      </div>
+
+      <button class="btn btn--export" id="exportBtn" type="button"
+              data-tip-de="Exportiert genau das, was gerade in der Tabelle steht: aktuelle Sortierung, ausgeblendete Spalten und Anbieterfilter berücksichtigt. Semikolon als Trennzeichen, UTF-8 — öffnet sich direkt in Excel und LibreOffice."
+              data-tip-en="Exports exactly what the table currently shows: current sorting, hidden columns and provider filter applied. Semicolon separator, UTF-8 — opens directly in Excel and LibreOffice.">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+          <path d="M8 10.5V2M4.8 6.2 8 2.8l3.2 3.4M2.5 12.5h11"/>
+        </svg>
+        <span data-lang-block="de">Als CSV exportieren</span><span data-lang-block="en">Export as CSV</span>
+      </button>
+
       <span class="table-foot__note" id="tableNote"></span>
     </div>
   </section>
 
   <!-- ================= Grafik ================= -->
-  <section class="section" id="grafik" aria-labelledby="grafikTitle">
+  <section class="section" id="grafik">
     <div class="section__head">
-      <h2 id="grafikTitle">Preis-Leistungs-Verhältnis</h2>
-      <span class="hint">Ein Punkt je Endpoint. Achsen frei wählbar, Farbe = Quantisierung, Größe = Uptime.</span>
+      <h2 data-lang-block="de">Preis-Leistungs-Verhältnis</h2>
+      <h2 data-lang-block="en">Price–performance</h2>
+      <span class="hint" data-lang-block="de">Ein Punkt je Endpoint. Achsen frei wählbar, Farbe = Quantisierung, Größe = Uptime.</span>
+      <span class="hint" data-lang-block="en">One dot per endpoint. Axes freely selectable, colour = quantization, size = uptime.</span>
     </div>
 
     <div class="chart-card">
       <div class="chart-controls">
-        <label class="field">X-Achse
+        <label class="field"><span data-lang-block="de">X-Achse</span><span data-lang-block="en">X axis</span>
           <select id="axisX"></select>
         </label>
-        <label class="field">Y-Achse
+        <label class="field"><span data-lang-block="de">Y-Achse</span><span data-lang-block="en">Y axis</span>
           <select id="axisY"></select>
         </label>
-        <label class="check" title="Logarithmische Achse: gleiche Abstände bedeuten gleichen Faktor. Sinnvoll bei Preisen, die über mehrere Größenordnungen streuen."><input type="checkbox" id="logX"> X logarithmisch</label>
-        <label class="check" title="Logarithmische Achse: gleiche Abstände bedeuten gleichen Faktor. Sinnvoll bei Preisen, die über mehrere Größenordnungen streuen."><input type="checkbox" id="logY"> Y logarithmisch</label>
+        <label class="check" data-tip-de="Logarithmische Achse: gleiche Abstände bedeuten gleichen Faktor. Sinnvoll bei Preisen, die über mehrere Größenordnungen streuen." data-tip-en="Logarithmic axis: equal spacing means an equal factor. Useful for prices that span several orders of magnitude.">
+          <input type="checkbox" id="logX">
+          <span data-lang-block="de">X logarithmisch</span><span data-lang-block="en">X logarithmic</span>
+        </label>
+        <label class="check" data-tip-de="Logarithmische Achse: gleiche Abstände bedeuten gleichen Faktor. Sinnvoll bei Preisen, die über mehrere Größenordnungen streuen." data-tip-en="Logarithmic axis: equal spacing means an equal factor. Useful for prices that span several orders of magnitude.">
+          <input type="checkbox" id="logY">
+          <span data-lang-block="de">Y logarithmisch</span><span data-lang-block="en">Y logarithmic</span>
+        </label>
         <span class="hint" id="chartNote"></span>
       </div>
 
       <div class="chart-wrap">
-        <svg id="chart" viewBox="0 0 980 420" role="img" aria-labelledby="chartTitle">
-          <title id="chartTitle">Streudiagramm der Anbieter</title>
+        <svg id="chart" viewBox="0 0 980 420" role="img" aria-label="Streudiagramm der Anbieter">
+          <title>Streudiagramm der Anbieter</title>
         </svg>
       </div>
 
@@ -177,77 +296,64 @@
     </div>
   </section>
 
-  <!-- ================= Nutzungsprofil ================= -->
-  <section class="section" id="nutzung" aria-labelledby="nutzungTitle">
-    <div class="section__head">
-      <h2 id="nutzungTitle">Nutzungsprofil aus dem Activity-Export</h2>
-      <span class="hint">Optional — ersetzt die Annahmen oben durch deine echten Tokenmengen.</span>
-    </div>
-
-    <div class="panel">
-      <div class="drop" id="drop" role="button" tabindex="0" aria-label="Activity-CSV auswählen oder hier ablegen">
-        <strong>Activity-CSV hier ablegen oder klicken</strong>
-        <span>
-          openrouter.ai → Activity → Export. Erwartet werden die Spalten
-          <code>tokens_prompt</code>, <code>tokens_completion</code>, <code>model_permaslug</code>;
-          optional <code>tokens_cached</code>, <code>provider_name</code>, <code>cost_total</code>.
-        </span>
-      </div>
-      <input type="file" id="csvFile" accept=".csv,text/csv" hidden>
-      <div class="msg" id="csvMsg" role="status" aria-live="polite"></div>
-      <div class="kpis" id="csvKpis"></div>
-      <p class="hint hint--top" id="csvPrivacy">
-        Die Datei wird ausschließlich im Arbeitsspeicher dieses Tabs gelesen. Sie verlässt den
-        Browser nicht — nachprüfbar im Netzwerk-Tab der Entwicklerwerkzeuge.
-      </p>
-    </div>
-  </section>
-
   <!-- ================= Filterliste (bewusst untergeordnet) ================= -->
   <details class="advanced" id="filterliste">
     <summary>
-      Anbieter-Filterliste erzeugen
-      <span class="hint">für <code>provider_routing.ignore</code> in OpenRouter oder Hermes</span>
+      <span data-lang-block="de">Anbieter-Filterliste erzeugen</span>
+      <span data-lang-block="en">Generate a provider filter list</span>
+      <span class="hint" data-lang-block="de">für <code>provider_routing.ignore</code> in OpenRouter oder Hermes</span>
+      <span class="hint" data-lang-block="en">for <code>provider_routing.ignore</code> in OpenRouter or Hermes</span>
     </summary>
     <div class="advanced__body">
-      <p class="hint">
+      <p class="hint" data-lang-block="de">
         Grenzwerte setzen — alle Endpoints, die sie unterschreiten, landen in der Liste. Diese Seite
         schreibt nichts in eine Konfiguration; sie erzeugt nur Text zum Kopieren.
       </p>
+      <p class="hint" data-lang-block="en">
+        Set thresholds — every endpoint that falls below them goes into the list. This page writes
+        nothing to any configuration; it only produces text to copy.
+      </p>
       <div class="rule-row">
-        <label class="field" title="Endpoints, die diesen Durchsatz nicht erreichen, landen in der ignore-Liste.">mind. tok/s
+        <label class="field" data-tip-de="Endpoints, die diesen Durchsatz nicht erreichen, landen in der ignore-Liste." data-tip-en="Endpoints below this throughput go into the ignore list.">
+          <span data-lang-block="de">mind. tok/s</span><span data-lang-block="en">min. tok/s</span>
           <input type="number" id="ruleToks" value="0" min="0" step="5" inputmode="numeric">
         </label>
-        <label class="field" title="Endpoints, deren erste Antwort länger dauert, landen in der ignore-Liste.">höchstens TTFT (ms)
+        <label class="field" data-tip-de="Endpoints, deren erste Antwort länger dauert, landen in der ignore-Liste." data-tip-en="Endpoints whose first token takes longer go into the ignore list.">
+          <span data-lang-block="de">höchstens TTFT (ms)</span><span data-lang-block="en">max. TTFT (ms)</span>
           <input type="number" id="ruleTtft" value="5000" min="0" step="100" inputmode="numeric">
         </label>
-        <label class="field" title="Endpoints mit schlechterer Uptime landen in der ignore-Liste.">Uptime ab (%)
+        <label class="field" data-tip-de="Endpoints mit schlechterer Uptime landen in der ignore-Liste." data-tip-en="Endpoints with lower uptime go into the ignore list.">
+          <span data-lang-block="de">Uptime ab (%)</span><span data-lang-block="en">uptime from (%)</span>
           <input type="number" id="ruleUptime" value="0" min="0" max="100" step="1" inputmode="numeric">
         </label>
       </div>
       <div class="output-line">
         <span class="table-foot__label">ignore</span>
         <code id="ignoreOut">—</code>
-        <button class="btn" id="copyIgnore" type="button">Kopieren</button>
+        <button class="btn" id="copyIgnore" type="button" data-lang-block="de">Kopieren</button>
+        <button class="btn" id="copyIgnoreEn" type="button" data-lang-block="en">Copy</button>
       </div>
       <div class="output-line">
         <span class="table-foot__label">only</span>
         <code id="onlyOut">—</code>
-        <button class="btn" id="copyOnly" type="button">Kopieren</button>
+        <button class="btn" id="copyOnly" type="button" data-lang-block="de">Kopieren</button>
+        <button class="btn" id="copyOnlyEn" type="button" data-lang-block="en">Copy</button>
       </div>
       <p class="hint" id="filterNote"></p>
     </div>
   </details>
 
   <!-- ================= Methodik ================= -->
-  <section class="section" id="methodik" aria-labelledby="methodikTitle">
+  <section class="section" id="methodik">
     <div class="section__head">
-      <h2 id="methodikTitle">Wie die Zahlen entstehen</h2>
-      <span class="hint">Damit die Tabelle ohne Vorwissen lesbar ist.</span>
+      <h2 data-lang-block="de">Wie die Zahlen entstehen</h2>
+      <h2 data-lang-block="en">How the numbers are produced</h2>
+      <span class="hint" data-lang-block="de">Damit die Tabelle ohne Vorwissen lesbar ist.</span>
+      <span class="hint" data-lang-block="en">So the table is readable without prior knowledge.</span>
     </div>
 
     <div class="methodik">
-      <article>
+      <article data-lang-block="de">
         <h3>Ein Modell, viele Endpoints</h3>
         <p>
           OpenRouter vermittelt ein Modell an mehrere Anbieter. Jeder Anbieter ist ein eigener
@@ -259,8 +365,20 @@
           betreibt (z. B. <code>fp4</code> und <code>fp8</code>).
         </p>
       </article>
+      <article data-lang-block="en">
+        <h3>One model, many endpoints</h3>
+        <p>
+          OpenRouter routes a model to several providers. Each provider is a separate
+          <em>endpoint</em> with its own price, its own hardware and often its own quantization.
+          That is why the table lists every endpoint individually — not the provider as a whole.
+        </p>
+        <p>
+          A provider can appear more than once if it runs the same model in several variants
+          (e.g. <code>fp4</code> and <code>fp8</code>).
+        </p>
+      </article>
 
-      <article>
+      <article data-lang-block="de">
         <h3>Preise pro Million Token</h3>
         <p>
           Alle Preisangaben sind US-Dollar pro 1 Mio. Token, so wie OpenRouter sie abrechnet:
@@ -272,21 +390,47 @@
           den vollen Input-Preis — die Seite rechnet das so.
         </p>
       </article>
-
-      <article>
-        <h3>Hochgerechnete Kosten</h3>
+      <article data-lang-block="en">
+        <h3>Prices per million tokens</h3>
         <p>
-          Die Spalte „Kosten je 1.000 Calls“ ist dein Tokenprofil mal die Preise des Endpoints:
-          <code>(Input − Cache) × Preis_in + Cache × Preis_cache + Output × Preis_out</code>,
-          normiert auf 1.000 Calls.
+          All prices are US dollars per 1 million tokens, exactly as OpenRouter bills them:
+          <strong>input</strong> for new prompt tokens, <strong>output</strong> for generated tokens,
+          <strong>cache</strong> for tokens read from the prompt cache.
         </p>
         <p>
-          Das ist unabhängig davon, wie viele Calls tatsächlich im Log stehen — zwei Logs mit
-          gleichem Verhältnis, aber unterschiedlicher Länge ergeben dieselbe Zahl.
+          If the cache price shows “—” the endpoint has no cache rate. Cache tokens then cost the full
+          input price — that is how this page calculates it.
         </p>
       </article>
 
-      <article>
+      <article data-lang-block="de">
+        <h3>Hochgerechnete Kosten</h3>
+        <p>
+          „Kosten gesamt“ ist dein Nutzungsprofil mal die Preise des Endpoints:
+          <code>(Input − Cache) × Preis_in + Cache × Preis_cache + Output × Preis_out</code>.
+          „Kosten je 1.000 Calls“ ist derselbe Wert, nur auf 1.000 Calls normiert — damit sich
+          Anbieter vergleichen lassen, egal wie groß dein Log ist.
+        </p>
+        <p>
+          Beide Spalten beruhen auf absoluten Tokenmengen. Zwei Profile mit gleichem Verhältnis, aber
+          unterschiedlicher Länge ergeben dieselben Kosten je 1.000 Calls.
+        </p>
+      </article>
+      <article data-lang-block="en">
+        <h3>Projected costs</h3>
+        <p>
+          “Total cost” is your usage profile times the endpoint's prices:
+          <code>(input − cache) × price_in + cache × price_cache + output × price_out</code>.
+          “Cost per 1,000 calls” is the same value normalized to 1,000 calls — so providers stay
+          comparable no matter how large your log is.
+        </p>
+        <p>
+          Both columns are based on absolute token counts. Two profiles with the same ratio but
+          different length produce the same cost per 1,000 calls.
+        </p>
+      </article>
+
+      <article data-lang-block="de">
         <h3>Cache-Quote</h3>
         <p>
           Wie viel des Inputs aus dem Cache kommt, entscheidet über den Preis. „je Anbieter“ nutzt
@@ -298,8 +442,19 @@
           Cache-Tarif haben.
         </p>
       </article>
+      <article data-lang-block="en">
+        <h3>Cache hit rate</h3>
+        <p>
+          How much of the input comes from the cache decides the price. “Per provider” uses the rate
+          OpenRouter reports for this endpoint (latest daily value, one week of measurement); “from
+          the log” uses the rate from your CSV throughout.
+        </p>
+        <p>
+          A high cache share only lowers costs at endpoints that actually have a cache rate.
+        </p>
+      </article>
 
-      <article>
+      <article data-lang-block="de">
         <h3>Tempo und Ausfälle</h3>
         <p>
           <strong>tok/s</strong> ist der Median-Durchsatz, <strong>TTFT</strong> die Median-Zeit bis
@@ -311,8 +466,20 @@
           Endpoints, die OpenRouter aktuell als gestört führt.
         </p>
       </article>
+      <article data-lang-block="en">
+        <h3>Speed and outages</h3>
+        <p>
+          <strong>tok/s</strong> is the median throughput, <strong>TTFT</strong> the median time to
+          the first token — both over the last 30 minutes, measured by OpenRouter.
+          <strong>Uptime</strong> is the share of successful requests in the same window.
+        </p>
+        <p>
+          A median is more robust against single outliers than a mean. “degraded” marks endpoints
+          that OpenRouter currently reports as impaired.
+        </p>
+      </article>
 
-      <article>
+      <article data-lang-block="de">
         <h3>Grenzen der Aussage</h3>
         <p>
           Die Zahlen sind Momentaufnahmen: 30 Minuten für Tempo, eine Woche für die Cache-Quote.
@@ -324,6 +491,18 @@
           mit echten Aufgaben.
         </p>
       </article>
+      <article data-lang-block="en">
+        <h3>Limits of the statement</h3>
+        <p>
+          These numbers are snapshots: 30 minutes for speed, one week for the cache hit rate. Time of
+          day, load and routing decisions shift them.
+        </p>
+        <p>
+          Quality is not measured here. Quantization is a hint (smaller usually means faster and
+          cheaper, potentially less accurate) but not proof — only your own test with real tasks
+          tells you about quality.
+        </p>
+      </article>
     </div>
   </section>
 </main>
@@ -331,35 +510,54 @@
 <footer class="site-footer">
   <div class="site-footer__inner">
     <div>
-      <h3>Über diese Seite</h3>
-      <p>
-        Ein Vergleichswerkzeug für OpenRouter-Anbieter: Preise, Durchsatz, Latenz und
-        hochgerechnete Kosten je Modell. Kein Konto, keine Anmeldung, keine Server-Logik — die
-        Auswertung passiert in deinem Browser.
+      <h3 data-lang-block="de">Über diese Seite</h3>
+      <h3 data-lang-block="en">About this site</h3>
+      <p data-lang-block="de">
+        Ein Vergleichswerkzeug für OpenRouter-Anbieter: Preise, Durchsatz, Latenz und hochgerechnete
+        Kosten je Modell. Kein Konto, keine Anmeldung, keine Server-Logik — die Auswertung passiert
+        in deinem Browser.
+      </p>
+      <p data-lang-block="en">
+        A comparison tool for OpenRouter providers: prices, throughput, latency and projected costs
+        per model. No account, no sign-in, no server logic — the evaluation happens in your browser.
       </p>
       <p class="linkline">
-        <a href="#methodik">Wie die Zahlen entstehen</a>
+        <a href="#methodik" data-lang-block="de">Wie die Zahlen entstehen</a>
+        <a href="#methodik" data-lang-block="en">How the numbers are produced</a>
       </p>
     </div>
+
     <div>
-      <h3>Daten</h3>
+      <h3 data-lang-block="de">Daten</h3>
+      <h3 data-lang-block="en">Data</h3>
       <ul>
-        <li>Quelle: openrouter.ai (Modell- und Endpoint-API)</li>
-        <li>Stand: <span id="footStamp">—</span></li>
-        <li>Umfang: <span id="footCounts">—</span></li>
-        <li>Tempo/TTFT: Median der letzten 30 Minuten</li>
+        <li data-lang-block="de">Quelle: openrouter.ai (Modell- und Endpoint-API)</li>
+        <li data-lang-block="en">Source: openrouter.ai (model and endpoint API)</li>
+        <li><span data-lang-block="de">Stand:</span><span data-lang-block="en">As of:</span> <span id="footStamp">—</span></li>
+        <li><span data-lang-block="de">Umfang:</span><span data-lang-block="en">Scope:</span> <span id="footCounts">—</span></li>
+        <li data-lang-block="de">Tempo/TTFT: Median der letzten 30 Minuten</li>
+        <li data-lang-block="en">Speed/TTFT: median of the last 30 minutes</li>
       </ul>
     </div>
+
     <div>
-      <h3>Rechtliches</h3>
+      <h3 data-lang-block="de">Rechtliches</h3>
+      <h3 data-lang-block="en">Legal</h3>
       <ul>
-        <li><a href="datenschutz.html">Datenschutz</a></li>
-        <li>Keine Cookies, kein Tracking, keine externen Schriften</li>
-        <li>Kein Impressum nötig: privates, kostenloses Angebot ohne Geschäftsbetrieb</li>
+        <li>
+          <a href="datenschutz.html" data-lang-block="de">Datenschutz</a>
+          <a href="datenschutz.html?lang=en" data-lang-block="en">Privacy</a>
+        </li>
+        <li data-lang-block="de">Keine Cookies, kein Tracking, keine externen Schriften</li>
+        <li data-lang-block="en">No cookies, no tracking, no external fonts</li>
+        <li data-lang-block="de">Kein Impressum nötig: privates, kostenloses Angebot ohne Geschäftsbetrieb</li>
+        <li data-lang-block="en">No imprint required: private, non-commercial offering</li>
       </ul>
     </div>
+
     <div class="site-footer__legal">
-      <span>Kein offizielles Angebot von OpenRouter. Preise und Verfügbarkeit ohne Gewähr.</span>
+      <span data-lang-block="de">Kein offizielles Angebot von OpenRouter. Preise und Verfügbarkeit ohne Gewähr.</span>
+      <span data-lang-block="en">Not an official OpenRouter offering. Prices and availability without warranty.</span>
       <span class="spacer"></span>
       <span id="footBuilt">—</span>
     </div>
@@ -369,8 +567,11 @@
 <div class="tip" id="tip" role="tooltip" aria-hidden="true"></div>
 
 <noscript>
-  <div class="panel panel--note">
+  <div class="panel panel--note" data-lang-block="de">
     Diese Seite rechnet im Browser. Ohne JavaScript kann sie keine Anbieter vergleichen.
+  </div>
+  <div class="panel panel--note" data-lang-block="en">
+    This page calculates in the browser. Without JavaScript it cannot compare providers.
   </div>
 </noscript>
 
