@@ -356,6 +356,8 @@
       case 'ttft': return row.ttft == null ? '<span class="dim">—</span>' : fmtMs(row.ttft);
       case 'uptime': {
         if (row.uptime == null) return '<span class="dim">—</span>';
+        // 0 % ohne Messwerte heißt bei OpenRouter "keine Daten", nicht "Ausfall"
+        if (row.uptime === 0 && row.toks == null && row.ttft == null) return '<span class="dim">—</span>';
         const cls = row.uptime >= 99 ? '' : row.uptime >= 95 ? 'class="dim"' : 'class="neg"';
         return `<span ${cls}>${fmtPct(row.uptime)}</span>`;
       }
@@ -978,13 +980,16 @@
     if (models.length > 1) parts.push(kpi('Modelle im Log', String(models.length)));
     box.innerHTML = parts.join('');
 
-    // Hinweis, wenn das Log ein anderes Modell nutzt als die Ansicht
-    if (top && top[0] !== state.modelId && state.data.models.some(m => m.id === top[0])) {
+    // Hinweis, wenn das Log ein anderes Modell nutzt als die Ansicht.
+    // Die CSV enthält den datierten Permaslug (…-20261017), die Seite arbeitet
+    // mit der Modell-Kennung — deshalb über id UND slug suchen.
+    const match = top && state.data.models.find(m => m.id === top[0] || m.slug === top[0]);
+    if (match && match.id !== state.modelId) {
       const btn = document.createElement('button');
       btn.className = 'btn';
       btn.type = 'button';
-      btn.textContent = `Zu ${top[0]} wechseln`;
-      btn.addEventListener('click', () => selectModel(top[0]));
+      btn.textContent = `Zu ${match.name || match.id} wechseln`;
+      btn.addEventListener('click', () => selectModel(match.id));
       const wrap = document.createElement('div');
       wrap.className = 'kpi';
       wrap.append(btn);
