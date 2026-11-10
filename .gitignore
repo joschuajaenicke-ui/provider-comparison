@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Lokale Testläufe
+/tmp/
+*.log
+
+# Editor / Betriebssystem
+.DS_Store
+.idea/
+.vscode/
+*.swp

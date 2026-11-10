@@ -1,0 +1,62 @@
+name: Datenstand aktualisieren
+
+# Holt täglich die aktuellen Preise, Durchsatz- und Latenzwerte von OpenRouter
+# und committet data/models.json. Braucht keine Secrets: alle genutzten
+# Endpunkte sind ohne API-Schlüssel lesbar.
+
+on:
+  schedule:
+    - cron: '17 5 * * *'   # 05:17 UTC, also 06:17 bzw. 07:17 in Deutschland
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Daten holen
+        run: python3 tools/build_data.py --jobs 6
+
+      - name: Plausibilität prüfen
+        run: |
+          python3 - <<'PY'
+          import json, sys
+          d = json.load(open("data/models.json", encoding="utf-8"))
+          counts = d.get("counts", {})
+          models = counts.get("models", 0)
+          endpoints = counts.get("endpoints", 0)
+          measured = sum(1 for m in d["models"] for e in m["endpoints"] if e.get("toks") is not None)
+          print(f"{models} Modelle, {endpoints} Endpoints, {measured} mit Durchsatzwert")
+          if models < 50 or endpoints < 50:
+              sys.exit("Zu wenig Daten — Aktualisierung abgebrochen, alter Stand bleibt.")
+          if measured < endpoints * 0.2:
+              sys.exit("Zu wenige Messwerte (Quelle geändert?) — Aktualisierung abgebrochen.")
+          PY
+
+      - name: Committen
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- data/models.json; then
+            echo "Keine Änderung."
+            exit 0
+          fi
+          git add data/models.json
+          git commit -m "Datenstand $(date -u +%Y-%m-%d)"
+          git push

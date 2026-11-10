@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Datenschutz — Provider-Vergleich</title>
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="brand" href="./">
+      <span class="brand__mark" aria-hidden="true">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <path d="M2 12.5 6.5 7l3 3L14 4"/>
+        </svg>
+      </span>
+      Provider-Vergleich
+      <span class="brand__sub">OpenRouter</span>
+    </a>
+    <nav class="site-nav" aria-label="Hauptnavigation">
+      <a href="index.html">Zurück zum Vergleich</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="intro intro--single">
+    <div>
+      <h1>Datenschutz</h1>
+      <p class="intro__lead">
+        Diese Seite ist ein rein statisches Werkzeug. Es gibt kein Konto, keine Anmeldung,
+        keine Datenbank und keine Auswertung von Besucherverhalten.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="methodik">
+      <article>
+        <h3>Deine Activity-CSV</h3>
+        <p>
+          Wenn du eine Activity-CSV ablegst, wird sie ausschließlich im Arbeitsspeicher deines
+          Browsers gelesen und ausgewertet. Sie wird nicht hochgeladen, nicht gespeichert und
+          nicht an Dritte übertragen. Nach dem Neuladen der Seite ist sie vergessen.
+        </p>
+        <p>
+          Nachprüfbar: öffne die Entwicklerwerkzeuge (F12), Reiter „Netzwerk“, und lade eine CSV.
+          Es erscheint keine Anfrage, die deine Daten enthält.
+        </p>
+      </article>
+
+      <article>
+        <h3>Lokale Einstellungen</h3>
+        <p>
+          Die Seite merkt sich im <code>localStorage</code> deines Browsers: das zuletzt gewählte
+          Modell, die Spaltenauswahl, die Achsenwahl, dein Kostenmodell und die helle oder dunkle
+          Darstellung. Das sind technisch notwendige Angaben, damit die Seite so aussieht, wie du
+          sie verlassen hast. Sie verlassen dein Gerät nicht und lassen sich jederzeit über die
+          Browsereinstellungen löschen.
+        </p>
+      </article>
+
+      <article>
+        <h3>Hosting und Server-Logfiles</h3>
+        <p>
+          Die Seite wird über GitHub Pages (GitHub Inc., USA) ausgeliefert. Beim Abruf verarbeitet
+          der Hoster technisch notwendige Verbindungsdaten, insbesondere deine IP-Adresse, Datum
+          und Uhrzeit, die abgerufene Datei und den User-Agent. Rechtsgrundlage ist das
+          berechtigte Interesse an einem sicheren und stabilen Betrieb (Art. 6 Abs. 1 lit. f
+          DSGVO). Auf diese Logfiles habe ich keinen Zugriff und keine Einsicht.
+        </p>
+        <p>
+          Es werden keine Cookies gesetzt, es gibt kein Tracking, keine Analyse-Werkzeuge, keine
+          Werbung und keine externen Schriftarten oder Skripte. Alle Dateien werden von derselben
+          Domain geladen.
+        </p>
+      </article>
+
+      <article>
+        <h3>Abruf der Preisdaten</h3>
+        <p>
+          Preise, Durchsatz und Latenz liegen als Datei <code>data/models.json</code> auf dieser
+          Seite und werden von hier geladen — nicht live von OpenRouter. Deine IP-Adresse geht
+          dadurch nicht an OpenRouter.
+        </p>
+        <p>
+          Nur wenn du ein Modell suchst, das in dieser Datei noch fehlt, fragt die Seite die
+          öffentliche OpenRouter-API direkt aus deinem Browser ab. Dabei wird deine IP-Adresse an
+          openrouter.ai übertragen. Das passiert ausschließlich auf deine Veranlassung und ist für
+          diese eine Funktion technisch unvermeidbar.
+        </p>
+      </article>
+
+      <article>
+        <h3>Verantwortlich</h3>
+        <p>
+          [Vor- und Nachname, Anschrift, Kontaktadresse eintragen — vor der Veröffentlichung
+          ausfüllen.]
+        </p>
+        <p>
+          Da dieses Angebot kostenlos, ohne Werbung und ohne Geschäftsbetrieb bereitgestellt wird,
+          besteht nach § 5 DDG keine Impressumspflicht. Die Angaben oben dienen der
+          Nachvollziehbarkeit nach Art. 13 DSGVO.
+        </p>
+      </article>
+
+      <article>
+        <h3>Deine Rechte</h3>
+        <p>
+          Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung,
+          Datenübertragbarkeit und Widerspruch. Da diese Seite selbst keine personenbezogenen Daten
+          erhebt oder speichert, betrifft das praktisch nur die Server-Logfiles des Hosters.
+        </p>
+        <p>
+          Beschwerden kannst du bei einer Datenschutz-Aufsichtsbehörde einlegen, in der Regel in
+          deinem Bundesland.
+        </p>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="site-footer__legal">
+      <span>Stand: <span id="stand">—</span></span>
+      <span class="spacer"></span>
+      <a href="index.html">Zurück zum Vergleich</a>
+    </div>
+  </div>
+</footer>
+<script src="assets/datenschutz.js"></script>
+</body>
+</html>
