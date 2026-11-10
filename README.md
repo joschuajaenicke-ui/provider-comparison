@@ -12,14 +12,13 @@ Browser und sendet nichts.
 | Bereich | Funktion |
 |---|---|
 | Modellsuche | Alle Modelle aus OpenRouter durchsuchbar (Name, Kennung, Tippfehler-tolerant) |
-| Tabelle | Ein Endpoint je Zeile: Preise, Kontext, tok/s, TTFT, Uptime, Cache-Quote, **Kosten gesamt** und **Kosten je 1.000 Calls** |
+| Tabelle | Ein Endpoint je Zeile: Preise, Kontext, tok/s, TTFT, Uptime, **Cache-Quote je Anbieter**, **Kosten gesamt** und **Kosten je 1.000 Calls** |
 | Spaltenfilter | Jede Spalte ein- und ausblendbar, sechs Spalten-Sets |
 | Anbieterfilter | Einzelne Anbieter aus Tabelle und Grafik ausblenden, mit Suche und „alle/keine“ |
 | Nutzungsprofil | Absolute Tokenmengen (Calls, Input gesamt, Output gesamt) oder Activity-CSV — beides an einer Stelle oberhalb der Tabelle |
 | Grafik | Streudiagramm mit frei wählbaren Achsen, log-Skala, Farbe = Quantisierung, Größe = Uptime |
 | Schnellauswahl | Sechs Presets, die Achsen, Spalten und Sortierung zusammen umstellen — Preis/Leistung getrennt nach Listenpreis und Nutzungsprofil |
 | CSV-Export | Exportiert genau die angezeigte Liste (Sortierung, Spalten, Anbieterfilter) |
-| Filterliste | `ignore`/`only`-Liste für `provider_routing` — bewusst untergeordnet, nur zum Kopieren |
 | Sprachen | Deutsch und Englisch, umschaltbar im Kopf; Auswahl bleibt lokal gespeichert |
 
 ## Aufbau

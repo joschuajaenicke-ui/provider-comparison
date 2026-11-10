@@ -186,16 +186,10 @@
 
       <p class="hint usage-note" data-lang-block="de">
         Export in OpenRouter: <strong>Dashboard → Logs → Menü (⋯) → Export</strong>.
-        Erwartet werden die Spalten <code>tokens_prompt</code>, <code>tokens_completion</code>,
-        <code>model_permaslug</code>; optional <code>tokens_cached</code>,
-        <code>provider_name</code>, <code>cost_total</code>.
         Die Datei wird nur im Arbeitsspeicher dieses Tabs gelesen und verlässt den Browser nicht.
       </p>
       <p class="hint usage-note" data-lang-block="en">
         Export in OpenRouter: <strong>Dashboard → Logs → ⋯ menu → Export</strong>.
-        Expected columns: <code>tokens_prompt</code>, <code>tokens_completion</code>,
-        <code>model_permaslug</code>; optional <code>tokens_cached</code>,
-        <code>provider_name</code>, <code>cost_total</code>.
         The file is read in this tab's memory only and never leaves the browser.
       </p>
       </div>
@@ -315,53 +309,6 @@
       <div class="chart-legend" id="chartLegend"></div>
     </div>
   </section>
-
-  <!-- ================= Filterliste (bewusst untergeordnet) ================= -->
-  <details class="advanced" id="filterliste">
-    <summary>
-      <span data-lang-block="de">Anbieter-Filterliste erzeugen</span>
-      <span data-lang-block="en">Generate a provider filter list</span>
-      <span class="hint" data-lang-block="de">für <code>provider_routing.ignore</code> in OpenRouter oder Hermes</span>
-      <span class="hint" data-lang-block="en">for <code>provider_routing.ignore</code> in OpenRouter or Hermes</span>
-    </summary>
-    <div class="advanced__body">
-      <p class="hint" data-lang-block="de">
-        Grenzwerte setzen — alle Endpoints, die sie unterschreiten, landen in der Liste. Diese Seite
-        schreibt nichts in eine Konfiguration; sie erzeugt nur Text zum Kopieren.
-      </p>
-      <p class="hint" data-lang-block="en">
-        Set thresholds — every endpoint that falls below them goes into the list. This page writes
-        nothing to any configuration; it only produces text to copy.
-      </p>
-      <div class="rule-row">
-        <label class="field" data-tip-de="Endpoints, die diesen Durchsatz nicht erreichen, landen in der ignore-Liste." data-tip-en="Endpoints below this throughput go into the ignore list.">
-          <span data-lang-block="de">mind. tok/s</span><span data-lang-block="en">min. tok/s</span>
-          <input type="number" id="ruleToks" value="0" min="0" step="5" inputmode="numeric">
-        </label>
-        <label class="field" data-tip-de="Endpoints, deren erste Antwort länger dauert, landen in der ignore-Liste." data-tip-en="Endpoints whose first token takes longer go into the ignore list.">
-          <span data-lang-block="de">höchstens TTFT (ms)</span><span data-lang-block="en">max. TTFT (ms)</span>
-          <input type="number" id="ruleTtft" value="5000" min="0" step="100" inputmode="numeric">
-        </label>
-        <label class="field" data-tip-de="Endpoints mit schlechterer Uptime landen in der ignore-Liste." data-tip-en="Endpoints with lower uptime go into the ignore list.">
-          <span data-lang-block="de">Uptime ab (%)</span><span data-lang-block="en">uptime from (%)</span>
-          <input type="number" id="ruleUptime" value="0" min="0" max="100" step="1" inputmode="numeric">
-        </label>
-      </div>
-      <div class="output-line">
-        <span class="table-foot__label">ignore</span>
-        <code id="ignoreOut">—</code>
-        <button class="btn" id="copyIgnore" type="button" data-lang-block="de">Kopieren</button>
-        <button class="btn" id="copyIgnoreEn" type="button" data-lang-block="en">Copy</button>
-      </div>
-      <div class="output-line">
-        <span class="table-foot__label">only</span>
-        <code id="onlyOut">—</code>
-        <button class="btn" id="copyOnly" type="button" data-lang-block="de">Kopieren</button>
-        <button class="btn" id="copyOnlyEn" type="button" data-lang-block="en">Copy</button>
-      </div>
-      <p class="hint" id="filterNote"></p>
-    </div>
-  </details>
 
   <!-- ================= Methodik ================= -->
   <section class="section" id="methodik">

@@ -153,9 +153,6 @@
       'provider.none': 'Keine',
       'provider.empty': 'Kein Anbieter passt zum Filter.',
 
-      'filter.note': '{ex} Anbieter fallen durch, {pass} bleiben übrig — bezogen auf die {n} Endpoints dieses Modells.',
-      'filter.none': 'Aktuell fällt kein Anbieter durch ({n} Endpoints geprüft).',
-      'filter.copied': 'Kopiert',
 
       'export.done': 'exportiert: {name}',
       'export.empty': 'Keine Zeilen zum Exportieren.',
@@ -303,9 +300,6 @@
       'provider.none': 'None',
       'provider.empty': 'No provider matches the filter.',
 
-      'filter.note': '{ex} providers fail, {pass} remain — across the {n} endpoints of this model.',
-      'filter.none': 'No provider fails right now ({n} endpoints checked).',
-      'filter.copied': 'Copied',
 
       'export.done': 'exported: {name}',
       'export.empty': 'No rows to export.',
@@ -441,7 +435,6 @@
     // Absolute Tokenmengen — so, wie sie im Dashboard stehen.
     cost: { calls: 1000, inputTotal: 2000000, outputTotal: 500000, cacheMode: 'provider' },
     profile: null,          // aus CSV: { calls, prompt, completion, inputTotal, outputTotal, logHit, logged, ... }
-    rules: { toks: 0, ttft: 5000, uptime: 0 },
     linked: null,           // hervorgehobener Endpoint (Tabelle <-> Grafik)
   };
 
@@ -886,9 +879,11 @@
       if (next) $('#providerSearch').focus();
     };
 
-    btn.addEventListener('click', e => { e.stopPropagation(); toggle(); });
-    panel.addEventListener('click', e => e.stopPropagation());
-    document.addEventListener('pointerdown', () => toggle(false));
+    btn.addEventListener('click', () => toggle());
+    // Klick außerhalb schließt das Panel — Klicks darin (auch auf die Häkchen) nicht
+    document.addEventListener('pointerdown', e => {
+      if (!$('#providerFilter').contains(e.target)) toggle(false);
+    });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') toggle(false); });
 
     $('#providerSearch').addEventListener('input', e => {
@@ -1650,73 +1645,6 @@
     });
   }
 
-  /* ---------------------------------------------------------------- Filterliste */
-
-  function slugOf(row) {
-    return (row.tag || row.provider || '').split('/')[0].toLowerCase();
-  }
-
-  function updateFilterList() {
-    const list = rows();
-    const excluded = new Set();
-    const passed = new Set();
-    for (const r of list) {
-      const slug = slugOf(r);
-      const fails =
-        (state.rules.toks > 0 && (r.toks == null || r.toks < state.rules.toks)) ||
-        (state.rules.ttft < 100000 && (r.ttft == null || r.ttft > state.rules.ttft)) ||
-        (state.rules.uptime > 0 && (r.uptime == null || r.uptime < state.rules.uptime));
-      if (fails) excluded.add(slug); else passed.add(slug);
-    }
-    for (const e of excluded) passed.delete(e);
-
-    const fmt = arr => arr.size ? `[${[...arr].sort().join(', ')}]` : '[]';
-    $('#ignoreOut').textContent = fmt(excluded);
-    $('#onlyOut').textContent = fmt(passed);
-    $('#copyIgnore').disabled = !excluded.size;
-    $('#copyIgnoreEn').disabled = !excluded.size;
-    $('#copyOnly').disabled = !passed.size;
-    $('#copyOnlyEn').disabled = !passed.size;
-    $('#filterNote').textContent = excluded.size
-      ? t('filter.note', { ex: excluded.size, pass: passed.size, n: list.length })
-      : t('filter.none', { n: list.length });
-  }
-
-  function initFilterList() {
-    const bind = (sel, key, fallback) => {
-      $(sel).addEventListener('input', e => {
-        const v = parseFloat(e.target.value);
-        state.rules[key] = Number.isFinite(v) ? v : fallback;
-        updateFilterList();
-      });
-    };
-    bind('#ruleToks', 'toks', 0);
-    bind('#ruleTtft', 'ttft', 5000);
-    bind('#ruleUptime', 'uptime', 0);
-
-    const copy = (btnSel, outSel) => $(btnSel).addEventListener('click', async () => {
-      const text = $(outSel).textContent;
-      const btn = $(btnSel);
-      try {
-        await navigator.clipboard.writeText(text);
-        const old = btn.textContent;
-        btn.textContent = t('filter.copied');
-        setTimeout(() => { btn.textContent = old; }, 1500);
-      } catch (e) {
-        // Fallback: markieren, damit Strg+C funktioniert
-        const range = document.createRange();
-        range.selectNodeContents($(outSel));
-        const sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(range);
-      }
-    });
-    copy('#copyIgnore', '#ignoreOut');
-    copy('#copyIgnoreEn', '#ignoreOut');
-    copy('#copyOnly', '#onlyOut');
-    copy('#copyOnlyEn', '#onlyOut');
-  }
-
   /* ------------------------------------------------------------------- Presets */
 
   function renderPresets() {
@@ -1896,7 +1824,6 @@
     renderTableNote();
     renderProviderFilter();
     renderChart();
-    updateFilterList();
     renderCsvKpis();
     updateUsageInfo();
     renderBuiltNote();
@@ -1910,7 +1837,6 @@
     renderTableNote();
     renderProviderFilter();
     renderChart();
-    updateFilterList();
     updateUsageInfo();
   }
 
@@ -1935,7 +1861,6 @@
     initPicker();
     initCsv();
     initCostModel();
-    initFilterList();
     initChartControls();
     initProviderFilter();
     $('#exportBtn').addEventListener('click', exportCsv);
