@@ -69,22 +69,12 @@ Werte zieht. Diese Endpunkte sind undokumentiert und können sich ändern; dann 
 Generator mit einer leeren Messwert-Spalte ab, nicht mit einem Fehler. Die Seite zeigt in dem
 Fall „—“ statt falscher Zahlen.
 
-## Veröffentlichen (GitHub Pages)
-
-1. Repository → Settings → Pages → Source: „Deploy from a branch“, Branch `main`, Ordner `/ (root)`.
-2. Die Action `.github/workflows/refresh-data.yml` aktualisiert `data/models.json` täglich und
-   committet den neuen Stand. Sie braucht keine Secrets.
-3. Der Abschnitt „Verantwortlich“ in `datenschutz.html` ist mit einer datensparsamen Fassung
-   gefüllt (privates Angebot, Kontakt über dieses Repository). Wer Klarnamen und Anschrift
-   veröffentlichen will, ergänzt sie dort.
-
 ## Entstehung
 
 Diese Seite wurde **vollständig von einem Hermes Agent** (Nous Research) generiert, der mit
 **DeepSeek V4.1 Flash** lief: Struktur, Styles, Anwendungslogik, Datengenerator, GitHub-Workflow,
-Datenschutztext und die englische Fassung. Grundlage waren das Verhalten der Vorgängerversion und
-die öffentlichen OpenRouter-APIs; die inhaltlichen Entscheidungen, Korrekturen und
-Abnahmekriterien kamen vom Betreiber.
+Datenschutztext und die englische Fassung. Grundlage sind die öffentlichen OpenRouter-APIs; die 
+inhaltlichen Entscheidungen, Korrekturen und Abnahmekriterien kamen vom Betreiber.
 
 Der Code ist also maschinell erzeugt und anschließend geprüft — im Browser (Klicks, Export,
 beide Sprachen, schmale Viewports, Konsole) und gegen die API (Datensätze, Feldzuordnung). Er ist
